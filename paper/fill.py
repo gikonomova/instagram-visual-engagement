@@ -1,5 +1,5 @@
 """Fill {{tokens}} in paper.md with numbers from outputs/tables, so every number in the paper is
-traceable to a pipeline output. Usage: fill.py paper.md > paper.filled.md
+traceable to a pipeline output. Usage: fill.py paper.md [--draft] > paper.filled.md   (--draft marks missing results as pending)
 Unknown tokens raise an error rather than leaving a placeholder in the manuscript.
 """
 import csv
@@ -42,7 +42,7 @@ def md_table(header, body):
     return "\n".join(out)
 
 
-def tokens():
+def tokens(draft=False):
     t = {}
     flow = json.loads((T / "02_sample_flow.json").read_text())
     prof = json.loads((T / "01_profile.json").read_text())
@@ -64,6 +64,8 @@ def tokens():
     t["within_person"] = f(100 * float(part["all"]["within_share_person_present"]), 1)
     t["acc2_all"] = n(part["all"]["accounts_2plus"])
     t["acc2_posts_all"] = n(part["all"]["posts_in_2plus"])
+    if draft and not (T / "04_confirmatory.csv").exists():
+        return t
 
     H = {r["H"]: r for r in rows("04_confirmatory.csv")}
     body = []
@@ -172,14 +174,15 @@ def tokens():
     return t
 
 
-def main(path):
-    t = tokens()
+def main(path, draft=False):
+    t = tokens(draft)
     text = pathlib.Path(path).read_text()
     missing = sorted(set(re.findall(r"\{\{(\w+)\}\}", text)) - set(t))
-    if missing:
+    if missing and not draft:
         sys.exit(f"unfilled tokens: {missing}")
+    t.update({k: "[pending: model results]" for k in missing})
     sys.stdout.write(re.sub(r"\{\{(\w+)\}\}", lambda m: str(t[m[1]]), text))
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main(sys.argv[1], draft="--draft" in sys.argv)

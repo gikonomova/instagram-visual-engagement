@@ -4,3 +4,4 @@ __pycache__/
 .Rhistory
 .DS_Store
 paper/~$*
+paper/.paper.*

@@ -380,9 +380,30 @@ three counts, and only aggregate statistics are published. No account is identif
 
 The dataset is distributed without a licence or documented provenance. We therefore cannot
 verify the conditions under which it was collected. This is a limitation for any reuse, and it
-is why we redistribute neither the data nor derived post-level records. The analysis was
-conducted under the research-ethics provisions of Sofia University "St. Kliment Ohridski".
-{{ETHICS_DETERMINATION}}
+is why we redistribute neither the data nor derived post-level records. No institutional
+ethics review was obtained for this study. The analysis involves no interaction with human
+participants, uses only data that were already public, and reports only aggregate results.
+
+# Data Availability Statement
+
+The source data are publicly available from Hugging Face [23] (revision and checksum in Section
+3.2). Analysis code, the registered protocol, and all aggregate outputs underlying the tables and
+figures are available at <https://github.com/gikonomova/instagram-visual-engagement> (tags
+`prereg-v1`, `amend-A1`). Post-level derived data are not redistributed because they contain
+account identifiers. They can be regenerated exactly from the public source with `run_all.sh`.
+
+# Author Contributions (CRediT)
+
+Galya Aymalieva: Conceptualization, Methodology, Software, Formal analysis, Data curation,
+Validation, Visualization, Writing -- original draft, Writing -- review & editing.
+
+# Conflict of Interest
+
+The author declares no conflict of interest.
+
+# Funding
+
+This research received no specific grant from any funding agency in the public, commercial, or not-for-profit sectors.
 
 # Declaration of Generative AI and AI-Assisted Technologies in the Writing Process
 
