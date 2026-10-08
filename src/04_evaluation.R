@@ -169,3 +169,38 @@ p <- ggplot(ab, aes(A, B)) + geom_abline(linetype = 2) + geom_point(alpha = .7, 
   labs(x = "IRR, half A accounts", y = "IRR, half B accounts",
        subtitle = sprintf("Visual terms of M2; r(log IRR) = %.3f", cor(log(ab$A), log(ab$B)))) + theme_bw(8)
 ggsave(FIG("fig4_replication.png"), p, width = 3.4, height = 3.2, dpi = 300)
+
+# Headline figure: confirmatory estimates H1-H4, full sample and both halves, against the SESOI band.
+cf <- rbindlist(lapply(seq_len(nrow(spec)), function(k) {
+  s <- spec[k]
+  rbindlist(lapply(c("", "_A", "_B"), function(sfx) {
+    r <- row(paste0(s$mod, sfx), s$term)
+    data.table(H = s$H, sample = c(Full = "Full", `_A` = "Half A", `_B` = "Half B")[[if (sfx == "") "Full" else sfx]],
+               irr = r$irr, lo95 = r$lo95, hi95 = r$hi95)
+  }))
+}))
+cf[, H := factor(H, levels = rev(spec$H), labels = rev(c("H1 Aesthetic (M1)", "H2 Person (M2)",
+                                                           "H3 Vivid colour (M2)", "H4 Between - within (M1-W)")))]
+p <- ggplot(cf, aes(irr, H, xmin = lo95, xmax = hi95, shape = sample, colour = sample)) +
+  annotate("rect", xmin = SESOI[1], xmax = SESOI[2], ymin = -Inf, ymax = Inf, alpha = .15) +
+  geom_vline(xintercept = 1, linetype = 2) +
+  geom_pointrange(position = position_dodge(width = .6), size = .25) +
+  scale_colour_manual(values = c(Full = "black", `Half A` = "#4C72B0", `Half B` = "#DD8452")) +
+  labs(x = "IRR (95% CI); grey = SESOI", y = NULL, colour = NULL, shape = NULL) +
+  theme_bw(8) + theme(legend.position = "bottom")
+ggsave(FIG("fig0_confirmatory.png"), p, width = 3.4, height = 2.8, dpi = 300)
+
+# Robustness forest: focal terms across specifications.
+spec_lab <- c(M1 = "Main", M2 = "Main", R1_M1 = "R1 followers free", R1_M2 = "R1 followers free",
+              R2_M1 = "R2 2019 only", R2_M2 = "R2 2019 only", R3_M1 = "R3 comments", R3_M2 = "R3 comments",
+              R4_M1 = "R4 >= 2 posts", R4_M2 = "R4 >= 2 posts", R5_M2W = "R5 full Mundlak",
+              R6_M1 = "R6 no extremes", R6_M2 = "R6 no extremes")
+rb <- copy(rob)[model %in% names(spec_lab)]
+rb[, spec := factor(spec_lab[model], levels = rev(unique(spec_lab)))]
+rb[, term := factor(term, levels = focal, labels = c("Aesthetic (H1)", "Person (H2)", "Vivid colour (H3)"))]
+p <- ggplot(rb, aes(irr, spec, xmin = lo95, xmax = hi95)) +
+  annotate("rect", xmin = SESOI[1], xmax = SESOI[2], ymin = -Inf, ymax = Inf, alpha = .15) +
+  geom_vline(xintercept = 1, linetype = 2) + geom_pointrange(size = .2) +
+  facet_wrap(~term, ncol = 1, scales = "free") +
+  labs(x = "IRR (95% CI)", y = NULL) + theme_bw(8)
+ggsave(FIG("fig7_robustness.png"), p, width = 3.4, height = 5.0, dpi = 300)

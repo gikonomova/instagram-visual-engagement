@@ -80,7 +80,10 @@ associations, which shows how far visual "drivers" reported in cross-sectional s
 reflect differences between accounts. (iii) A held-out evaluation of predictive value using the
 joint log predictive score for new accounts [16], reported together with calibration
 diagnostics [27]. (iv) A fully auditable pipeline: code, decision log, protocol and amendment
-(as git tags), and aggregate outputs.
+(as git tags), and aggregate outputs. Figure 1 maps the CRISP-DM phases to the study's
+artefacts.
+
+![Figure 1. Study design: CRISP-DM phases and the point at which the protocol was registered.](outputs/figures/figA_study_design.png){width=3.3in}
 
 # Related Work
 
@@ -148,10 +151,14 @@ The data are the public Hugging Face dataset *vargr/ig_train_dataset* [23]: revi
 February 2012 and August 2019, with {{share_2019}}% from 2019. Each post has like and comment
 counts, the recorded follower count, a business-account flag, a caption-topic label, detected
 object labels, a 12-level shot-scale label, an 18-level image category, and AADB-named
-aesthetic scores. Figure 1 shows the heavy-tailed distributions of likes and followers and the
-concentration of posts in 2019.
+aesthetic scores. Figure 2 shows the heavy-tailed distributions of likes and followers and the
+concentration of posts in 2019. Figure 3 shows the composition of the analysis sample by image
+category and shot scale. Fashion, travel, food, and beauty images, and selfies and medium shots,
+dominate.
 
-![Figure 1. Distributions of likes and recorded followers (log scale) and posts per month.](outputs/figures/fig1_distributions.png){width=3.3in}
+![Figure 2. Distributions of likes and recorded followers (log scale) and posts per month.](outputs/figures/fig1_distributions.png){width=3.3in}
+
+![Figure 3. Composition of the analysis sample by image category and shot scale.](outputs/figures/figC_composition.png){width=3.3in}
 
 **Provenance of the visual features.** The dataset card has no documentation, licence, or
 description of the sampling process. A search of the Hugging Face Hub, GitHub, and the
@@ -161,10 +168,15 @@ cinematographic taxonomies. The generating models, their training data, and any 
 are unknown. We therefore treat all image-derived variables as *model-based proxies* of the
 named constructs. We report three checks of internal plausibility instead of a validation
 against human ratings, which was not feasible because the dataset does not include the images.
-(i) Two independently produced labels agree: a person is detected in {{pl_selfie}}% of images
+(i) Two independently produced labels agree (Figure 4): a person is detected in {{pl_selfie}}% of images
 labelled selfie and {{pl_portrait}}% labelled portrait, but in only {{pl_aerial}}% of aerial
-shots. (ii) Depth-of-field scores are higher for extreme close-ups (mean z = {{pl_dof_ecu}}) than
-for extreme wide shots ({{pl_dof_ews}}), as optics would predict. (iii) Three attributes were
+shots. (ii) Depth-of-field scores agree only partly with shot scale. They are highest for portrait
+and close-up shots, which typically have a shallow focus, but extreme close-ups score below
+average (mean z = {{pl_dof_ecu}}, against {{pl_dof_ews}} for extreme wide shots), which optics
+would not predict (Figure 4). We read this as evidence of substantial measurement noise in the
+attribute scores.
+
+![Figure 4. Cross-classifier plausibility: share of images with a detected person and mean depth-of-field score, by shot-scale label.](outputs/figures/figD_feature_plausibility.png){width=3.3in} (iii) Three attributes were
 numerically degenerate and were excluded: motion blur (all |values| < 4·10⁻³³), repetition, and
 symmetry (constant 0.5). The degenerate attributes show that the feature pipeline was not
 error-free. Any null or negligible finding below therefore concerns these proxies, not visual
@@ -173,16 +185,14 @@ aesthetics in general.
 The overall aesthetic score correlates 0.61-0.86 with six attributes, so it is a composite and
 is analysed in a separate model (M1). Among the eight retained attributes, the median absolute
 pairwise correlation in the training data is {{corr_med}} and the maximum is {{corr_max}}
-(Table 1). Coefficients in M2 are therefore *conditional* associations: the association of one
+(Figure 5). Coefficients in M2 are therefore *conditional* associations: the association of one
 attribute with the outcome, holding the others fixed.
 
-{{TABLE_CORR}}
-
-: Table 1. Pairwise correlations of the eight retained aesthetic attributes (training accounts).
+![Figure 5. Pairwise correlations of the overall aesthetic score and the eight retained attributes (training accounts).](outputs/figures/figE_attribute_correlations.png){width=3.3in}
 
 ## Data preparation
 
-The sample flow is sequential:
+The sample flow is sequential (Figure 6):
 
 1. Start with {{flow_1_raw}} posts.
 2. Remove {{flow_2_removed_followers_0}} posts with zero recorded followers, for which the
@@ -209,13 +219,15 @@ releasing identifiers.
   replication.
 - **Model selection:** none. Every model specification was fixed in the protocol.
 
-Table 2 reports, for each partition, the number of multi-post accounts and the share of each
+![Figure 6. Sequential sample flow and account-level partitions.](outputs/figures/figB_sample_flow.png){width=3.3in}
+
+Table 1 reports, for each partition, the number of multi-post accounts and the share of each
 focal predictor's variance that lies within accounts, which is the information available to
 within-account estimates.
 
 {{TABLE_PARTITIONS}}
 
-: Table 2. Partitions, multi-post accounts, and the within-account share of predictor variance (sum of squared deviations from account means divided by the total sum of squares).
+: Table 1. Partitions, multi-post accounts, and the within-account share of predictor variance (sum of squared deviations from account means divided by the total sum of squares).
 
 # Methods (CRISP-DM Phase 4)
 
@@ -246,7 +258,11 @@ $$\log \mu_{ij} = \log F_j + \beta_W x_{ij} + \delta\,\bar x_j + \mathbf{c}_{ij}
 Here $\beta_W$ is the within-account association and $\beta_B = \beta_W + \delta$ is the
 between-account association. The decomposition assumes that, given $\bar{x}_j$, $u_j$ is
 independent of the post-level covariates and depends on $\bar{x}_j$ linearly. $\beta_W$ is
-identified only from accounts with two or more posts (Table 2). M1-W gives means only to the two
+identified only from accounts with two or more posts (Table 1). Among those accounts,
+42-62% of each predictor's variance lies within accounts (Figure 7), so within-account
+estimates rest on substantial variation.
+
+![Figure 7. Share of each predictor's variance that lies within accounts, among accounts with two or more posts.](outputs/figures/figF_within_share.png){width=3.3in} M1-W gives means only to the two
 focal predictors of H4. The exploratory model **R5** adds account means for *every* post-varying
 numeric covariate of M2 and so tests whether the other covariates need the same treatment. The
 categorical shot and category dummies receive no means.
@@ -286,7 +302,7 @@ post's marginal predictive distribution.
 
 ## Pre-registered hypotheses and decision rules
 
-Table 3 lists the hypotheses. Each was registered with its direction, estimand, model, and test
+Table 2 lists the hypotheses. Each was registered with its direction, estimand, model, and test
 before estimation.
 
 | H | Claim (association) | Estimand / model | Test |
@@ -297,7 +313,7 @@ before estimation.
 | H4 | Within- and between-account aesthetic associations differ | $\exp(\delta)$ in M1-W (eq. 2) | Two-sided Wald, $\delta \ne 0$ |
 | H5 | Visual features improve held-out prediction | Δ joint log score per post, M2 − M0 | One-sided paired bootstrap, Δ > 0 |
 
-: Table 3. Confirmatory hypotheses (registered as tag prereg-v1).
+: Table 2. Confirmatory hypotheses (registered as tag prereg-v1).
 
 The decision rules separate three questions.
 
@@ -319,7 +335,7 @@ tests (TOST) [15] against 0.97 and 1.03 reject after Holm adjustment across H1-H
 negligible means the 95% CI lies within ±0.01. Anything else is **inconclusive**. The ±3% band
 was fixed in advance as a convention, not estimated. At the median post (42 likes) it
 corresponds to about 1.3 likes, far below the Poisson-level noise of a single post (SD ≈ 6.5
-likes). We report verdicts for ±1% and ±5% as a sensitivity analysis (Table 6), together with all
+likes). We report verdicts for ±1% and ±5% as a sensitivity analysis (Table 4), together with all
 CIs.
 
 Pre-specified robustness checks:
@@ -341,7 +357,7 @@ The protocol is stored in `DECISIONS.md` in the project repository. It is marked
 `prereg-v1` (commit `ae91829`, 2026-10-08 11:16:07 EEST, pushed to GitHub immediately) and by
 amendment tag `amend-A1` (commit `2b7378c`, 11:33:32 EEST). The repository records the
 complete chronology. Before registration, the only outcome information inspected was the
-marginal distribution of likes (Figure 1) and the dispersion parameters of two control-only
+marginal distribution of likes (Figure 2) and the dispersion parameters of two control-only
 timing fits on random subsamples. These fits contained no visual terms. A first batch of fits
 was stopped before any model finished, because the amendment changed the preprocessing. All
 confirmatory fits were run after the amendment. A code check on a 6,000-account subsample
