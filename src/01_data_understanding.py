@@ -68,7 +68,8 @@ def main():
     for c in ["image_shot", "image_category", "description_category", "is_business_account"]:
         d[c].value_counts().rename("n").to_csv(TAB / f"01_counts_{c}.csv")
 
-    fig, ax = plt.subplots(1, 3, figsize=(12, 3.4))
+    plt.rcParams.update({"font.size": 8})
+    fig, ax = plt.subplots(3, 1, figsize=(3.4, 5.4))  # one journal column
     ax[0].hist(np.log10(d.likes + 1), bins=60, color="#4C72B0")
     ax[0].set(xlabel="log10(likes + 1)", ylabel="posts")
     ax[1].hist(np.log10(d.followers + 1), bins=60, color="#4C72B0")
@@ -76,7 +77,7 @@ def main():
     date.dt.to_period("M").value_counts().sort_index().plot(ax=ax[2], color="#4C72B0")
     ax[2].set(xlabel="month posted", ylabel="posts")
     fig.tight_layout()
-    fig.savefig(FIG / "fig1_distributions.png", dpi=200)
+    fig.savefig(FIG / "fig1_distributions.png", dpi=300)
     print(json.dumps(profile, indent=2, default=str))
 
 

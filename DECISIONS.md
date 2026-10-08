@@ -120,3 +120,20 @@ noise. It is fixed now so it cannot be tuned to the results later.
 This would replace the A/B halves and is reported as a deviation.
 
 Everything not listed above is **exploratory** and is labelled as such in the paper.
+
+### Implementation notes (after pre-registration, before results)
+
+**D14 Optimiser settings.** A control-only timing fit on a 60K-post subsample (no visual terms)
+reached nlminb's default evaluation limit. All fits therefore use
+`iter.max = eval.max = 1e4`. Convergence (`fit$convergence == 0`) and a positive-definite
+Hessian (`pdHess`) are recorded for every model in `outputs/tables/03_coef_*.csv`. A model
+failing either check is reported as such and is not used for a confirmatory verdict.
+*Why:* the timing run showed about 70 s for 20K posts and about 240 s for 60K posts. A full
+fit is roughly 1 h, well inside the 24 h fallback threshold, so the full-sample plan stands.
+
+**D15 Software pin.** glmmTMB 1.1.9. Newer versions depend on RTMB, which does not compile
+against R 4.1.2 on this machine. TMB's OpenMP parallelism is unavailable with Apple clang, so
+fits run single-threaded, with three models in parallel processes.
+
+**D16 Figure format.** Figures are rendered at one CSIR journal column (3.4 in / 8.6 cm) with
+8 pt text, to match the journal layout (captions "Figure N." centred below).
