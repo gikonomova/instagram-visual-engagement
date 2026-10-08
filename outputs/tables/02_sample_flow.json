@@ -1,9 +1,15 @@
 {
-  "raw": 605868,
-  "followers_gt_0": 605636,
-  "photos_only": 583830,
+  "1_raw": 605868,
+  "1_raw_videos": 21807,
+  "2_removed_followers_0": 232,
+  "2_removed_followers_0_of_which_video": 1,
+  "2_remaining": 605636,
+  "3_removed_videos": 21806,
+  "3_remaining": 583830,
+  "caption_missing": 0,
   "final": 583830,
   "accounts": 469330,
+  "train_posts": 466555,
   "test_posts": 117275,
   "half_A_posts": 291091
 }

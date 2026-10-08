@@ -137,3 +137,106 @@ fits run single-threaded, with three models in parallel processes.
 
 **D16 Figure format.** Figures are rendered at one CSIR journal column (3.4 in / 8.6 cm) with
 8 pt text, to match the journal layout (captions "Figure N." centred below).
+
+---
+
+## Protocol amendment A1 (2026-10-08, ~11:35 EEST, before any confirmatory result)
+
+**Context.** An external pre-submission review of the manuscript skeleton (no results) asked
+for clarifications. The first batch of model fits (launched about 11:20) was stopped at 11:29
+before any model finished, so no coefficient from any model with visual terms had been
+produced. This amendment was written while the restarted fits were running and was committed
+before any of them completed (see the git history). The pre-registered rule (section 1.4)
+remains the primary rule. Everything added here is either a clarification, a stricter
+additional criterion, or labelled exploratory.
+
+**Chronology.**
+- 10:58: data profiling (`src/01`).
+- 11:03: preparation (`src/02`).
+- 11:03-11:20: two control-only timing fits on random subsamples of 20K and 60K posts. These
+  had month, business, topic, and caption controls and **no visual terms**. Their only outputs
+  were run time, sigma_u, and theta.
+- 11:16:07: pre-registration commit `ae91829`, pushed to GitHub immediately.
+- 11:20-11:29: first fit batch, stopped with no output.
+- 11:31: restart with the amended preprocessing.
+
+The only outcome information seen before registration was the marginal distribution of likes
+(Fig. 1) and the control-only dispersion parameters. No association between likes and any
+visual feature was examined.
+
+**A1-1 Outcome wording.** The outcome is described as *likes relative to the recorded follower
+count*, not as engagement relative to the audience that could see a post. Follower counts are
+a single collection-time snapshot and are not impressions. The follower elasticity estimated in
+R1 is reported with its 95% CI.
+
+**A1-2 Causal language.** The estimands are conditional associations. The title and text avoid
+"drive".
+
+**A1-3 Preprocessing and the Mundlak model.**
+- z-scores now use the mean and SD of training accounts only (`02_standardisation.json`).
+- The log counts (persons, objects, caption length, hashtags, mentions) are log(1 + x) and are
+  not standardised. Missing captions are counted as empty; there are none.
+- Assumptions of the Mundlak decomposition:
+  - u_j is independent of the post-level covariates given the included account means;
+  - the dependence of u_j on those means is linear;
+  - within-account coefficients are identified only from accounts with 2 or more posts.
+- M1-W includes means only for the two focal predictors of H4. The new exploratory model
+  **R5** (M2 plus account means of every post-varying numeric covariate: 8 attributes, person
+  terms, object count, caption counts) checks whether the other covariates need the same
+  treatment. Shot scale and category dummies get no means; this is noted as a limitation.
+
+**A1-4 Partition descriptives.** `02_partitions.csv` reports, for the full sample, train, test,
+and each half: accounts, accounts with 2 or more posts, and the share of each focal predictor's
+variance that lies within accounts.
+
+**A1-5 Decision rules, made explicit.**
+- *Significance:* Wald z-tests, one-sided for H1-H3 and two-sided for H4, with Holm adjustment
+  across H1-H5 (as pre-registered). This tests against a null of no association.
+- *Practical importance:* the 95% CI of the IRR lies entirely outside [0.97, 1.03] (as
+  pre-registered). This is a separate criterion from significance.
+- *Equivalence ("negligible"):* the pre-registered criterion (90% CI inside the band) is
+  reported. In addition, a stricter version is applied: TOST p = max of the two one-sided
+  p-values against 0.97 and 1.03, Holm-adjusted across H1-H4.
+- *Replication:* in each half A and B, the estimate has the same sign as the full-sample
+  estimate and nominal p < 0.05 (same sidedness, unadjusted). Practical importance within the
+  halves is reported descriptively. This is *internal* replication within one dataset.
+- *H5 threshold (new, in log-score units):* H5 is supported if the Holm-adjusted p < 0.05 and
+  the lower bound of the 95% bootstrap CI of the score difference is at least **0.01 nats per
+  post**. That is a 1% gain in geometric-mean predictive probability (e^0.01 = 1.010), the same
+  order as the IRR band. H5 is negligible if the 95% CI lies within ±0.01. The IRR band does
+  not apply to H5.
+- *Why ±3%:* at the median post (42 likes), 3% is about 1.3 likes. That is far below
+  Poisson-level noise for a single post (SD about 6.5 likes, or 15%), so a creator could not
+  detect it from their own posts. It is a convention fixed in advance, not an estimate. Verdicts
+  at ±1% and ±5% are reported as a sensitivity analysis, and full CIs are given so readers can
+  apply their own threshold.
+
+**A1-6 Prediction (H5), specified precisely.**
+- The target is the joint predictive distribution of *all* posts of a new account, with u_j
+  integrated out jointly.
+- The per-post score is the sum over test accounts of log p(y_j), divided by the number of
+  test posts, so posts are weighted equally. The account-weighted mean is also reported.
+- The bootstrap resamples test accounts and applies the *same* resample to both models
+  (paired), 1,000 times.
+- Quadrature stability: 30 versus 60 Gauss-Hermite nodes.
+- Calibration (exploratory): randomised PIT histogram and the coverage of central 50% and 90%
+  prediction intervals, for the single-post marginal predictive of each model [Czado,
+  Gneiting & Held 2009].
+- Correction: a strictly proper score does not guarantee that a better-scoring model is
+  calibrated. Calibration is therefore reported separately.
+
+**A1-7 Diagnostics.**
+- For every model: convergence code, pdHess, theta, and sigma_u.
+- For M2: randomised quantile residuals [Dunn & Smyth 1996], conditional on the predicted
+  u_j, shown as a histogram and QQ summary.
+- NB2 variance: Var(y) = mu + mu^2 / theta.
+
+**A1-8 Extreme observations (new robustness check R6).** Refit M1 and M2 without posts whose
+likes per follower exceed the training 99.9th percentile and without accounts with more than
+10^6 followers.
+
+**A1-9 Registration audit trail.**
+- Git tag `prereg-v1` marks `ae91829`; tag `amend-A1` marks this amendment.
+- The GitHub repository is private until submission. When it is made public, the commit and
+  push timestamps become visible. Archiving the tagged release on Zenodo gives an independent
+  DOI timestamp.

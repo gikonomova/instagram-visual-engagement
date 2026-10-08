@@ -1,0 +1,38 @@
+{
+  "AestheticScore": {
+    "train_mean": 0.41944659080333324,
+    "train_sd": 0.10075764186266106
+  },
+  "BalancingElements": {
+    "train_mean": -0.019118343787947887,
+    "train_sd": 0.08039867568173628
+  },
+  "ColorHarmony": {
+    "train_mean": 0.06911662076101971,
+    "train_sd": 0.15193207205467782
+  },
+  "ContentAesthetics": {
+    "train_mean": 0.18111142089916596,
+    "train_sd": 0.2773507009861394
+  },
+  "DoFScore": {
+    "train_mean": 0.002313133868323704,
+    "train_sd": 0.12665188267141858
+  },
+  "LightScore": {
+    "train_mean": -0.11621566655020824,
+    "train_sd": 0.19924103209235394
+  },
+  "ObjectScore": {
+    "train_mean": 0.201540719896651,
+    "train_sd": 0.2564923984046993
+  },
+  "RuleOfThirdsScore": {
+    "train_mean": -0.04845012112593534,
+    "train_sd": 0.08446454947331716
+  },
+  "VividColorScore": {
+    "train_mean": -0.4538436789088068,
+    "train_sd": 0.1312973749816532
+  }
+}

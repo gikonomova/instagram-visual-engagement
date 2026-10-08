@@ -10,8 +10,11 @@ d[, image_shot := relevel(factor(image_shot), ref = "Medium Shot")]
 d[, image_category := relevel(factor(image_category), ref = "Lifestyle")]
 d[, description_category := relevel(factor(description_category), ref = "diaries_&_daily_life")]
 # Mundlak terms (M1-W): account means. For a single-post account, mean = value and within = 0.
-d[, `:=`(m_z_AestheticScore = mean(z_AestheticScore), m_person_present = mean(person_present)),
-  by = account]
+mund <- c("z_AestheticScore", "z_BalancingElements", "z_ColorHarmony", "z_ContentAesthetics",
+          "z_DoFScore", "z_LightScore", "z_ObjectScore", "z_RuleOfThirdsScore", "z_VividColorScore",
+          "person_present", "log_n_person", "log_n_objects", "log_caption_chars", "log_hashtags",
+          "log_mentions")
+d[, paste0("m_", mund) := lapply(.SD, mean), by = account, .SDcols = mund]
 d[, year := substr(as.character(month), 1, 4)]
 
 ctrl  <- "month + business + description_category + log_caption_chars + log_hashtags + log_mentions"
@@ -23,8 +26,12 @@ f <- function(rhs, y = "likes", offset = TRUE)
   as.formula(paste(y, "~", if (offset) "offset(log_followers) +", rhs, "+", ctrl, "+ (1 | account)"))
 
 two_plus <- d[, .N, by = account][N >= 2, account]
+# R6 (amendment A1-8): drop extreme observations. Thresholds come from training accounts only.
+rate_cut <- quantile(d[split == "train", likes / followers], 0.999)
+trimmed <- d[likes / followers <= rate_cut & followers <= 1e6]
+# R5 (amendment A1-3): Mundlak means for every post-varying numeric covariate of M2.
+vis2_w <- paste(vis2, "+", paste0("m_", setdiff(mund, "z_AestheticScore"), collapse = " + "))
 specs <- list(
-  M0      = list(f("1"), d),
   M1      = list(f("z_AestheticScore"), d),
   M2      = list(f(vis2), d),
   M1W     = list(f("z_AestheticScore + m_z_AestheticScore + person_present + m_person_present"), d),
@@ -42,6 +49,9 @@ specs <- list(
   R3_M2   = list(f(vis2, y = "comments"), d),
   R4_M1   = list(f("z_AestheticScore"), d[account %in% two_plus]),
   R4_M2   = list(f(vis2), d[account %in% two_plus]),
+  R5_M2W  = list(f(vis2_w), d),
+  R6_M1   = list(f("z_AestheticScore"), trimmed),
+  R6_M2   = list(f(vis2), trimmed),
   M0_train = list(f("1"), d[split == "train"]),        # H5, evaluated in src/04
   M2_train = list(f(vis2), d[split == "train"])
 )
