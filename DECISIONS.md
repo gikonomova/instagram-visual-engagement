@@ -257,3 +257,17 @@ heavy memory swapping. To finish the queue sooner:
 
 A smoke test showed identical log-likelihood (to 0.01) and coefficients (to 1e-5) for warm and
 cold starts, so warm starts change only the optimiser's path, not the estimates.
+
+**D19 Memory fix and run log (no specification change).**
+- *Cause of slow fits:* each worker built every model's data subset at startup, about 9 GB per
+  worker. With four workers on a 16 GB machine this caused constant swapping, and a full fit
+  took 3-6 h.
+- *Fix:* model data are now quoted and built only when that model is fitted, and three workers
+  run instead of four.
+- *Stale lock:* a lock left by a process killed during the D18 restart meant M1_A was never
+  fitted. The lock was removed and M1_A requeued.
+- *Restarted:* fits in progress when the workers were stopped (R1_M2, R2_M2, R6_M1, R6_M2)
+  restart from scratch.
+
+Completed before this change, with unchanged code paths: M1, M2, M1W, M2_train, M0_train,
+M1_B, M2_A, M2_B, M1W_A, M1W_B, R1_M1, R4_M1, R4_M2.

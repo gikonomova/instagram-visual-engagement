@@ -28,32 +28,32 @@ f <- function(rhs, y = "likes", offset = TRUE)
 two_plus <- d[, .N, by = account][N >= 2, account]
 # R6 (amendment A1-8): drop extreme observations. Thresholds come from training accounts only.
 rate_cut <- quantile(d[split == "train", likes / followers], 0.999)
-trimmed <- d[likes / followers <= rate_cut & followers <= 1e6]
+trimmed_rows <- quote(likes / followers <= rate_cut & followers <= 1e6)
 # R5 (amendment A1-3): Mundlak means for every post-varying numeric covariate of M2.
 vis2_w <- paste(vis2, "+", paste0("m_", setdiff(mund, "z_AestheticScore"), collapse = " + "))
 specs <- list(
-  M1      = list(f("z_AestheticScore"), d),
-  M2      = list(f(vis2), d),
-  M1W     = list(f("z_AestheticScore + m_z_AestheticScore + person_present + m_person_present"), d),
-  M1W_A   = list(f("z_AestheticScore + m_z_AestheticScore + person_present + m_person_present"), d[half == "A"]),
-  M1W_B   = list(f("z_AestheticScore + m_z_AestheticScore + person_present + m_person_present"), d[half == "B"]),
-  M1_A    = list(f("z_AestheticScore"), d[half == "A"]),
-  M1_B    = list(f("z_AestheticScore"), d[half == "B"]),
-  M2_A    = list(f(vis2), d[half == "A"]),
-  M2_B    = list(f(vis2), d[half == "B"]),
-  R1_M1   = list(f("z_AestheticScore + log_followers", offset = FALSE), d),
-  R1_M2   = list(f(paste(vis2, "+ log_followers"), offset = FALSE), d),
-  R2_M1   = list(f("z_AestheticScore"), d[year == "2019"]),
-  R2_M2   = list(f(vis2), d[year == "2019"]),
-  R3_M1   = list(f("z_AestheticScore", y = "comments"), d),
-  R3_M2   = list(f(vis2, y = "comments"), d),
-  R4_M1   = list(f("z_AestheticScore"), d[account %in% two_plus]),
-  R4_M2   = list(f(vis2), d[account %in% two_plus]),
-  R5_M2W  = list(f(vis2_w), d),
-  R6_M1   = list(f("z_AestheticScore"), trimmed),
-  R6_M2   = list(f(vis2), trimmed),
-  M0_train = list(f("1"), d[split == "train"]),        # H5, evaluated in src/04
-  M2_train = list(f(vis2), d[split == "train"])
+  M1      = list(f("z_AestheticScore"), quote(d)),
+  M2      = list(f(vis2), quote(d)),
+  M1W     = list(f("z_AestheticScore + m_z_AestheticScore + person_present + m_person_present"), quote(d)),
+  M1W_A   = list(f("z_AestheticScore + m_z_AestheticScore + person_present + m_person_present"), quote(d[half == "A"])),
+  M1W_B   = list(f("z_AestheticScore + m_z_AestheticScore + person_present + m_person_present"), quote(d[half == "B"])),
+  M1_A    = list(f("z_AestheticScore"), quote(d[half == "A"])),
+  M1_B    = list(f("z_AestheticScore"), quote(d[half == "B"])),
+  M2_A    = list(f(vis2), quote(d[half == "A"])),
+  M2_B    = list(f(vis2), quote(d[half == "B"])),
+  R1_M1   = list(f("z_AestheticScore + log_followers", offset = FALSE), quote(d)),
+  R1_M2   = list(f(paste(vis2, "+ log_followers"), offset = FALSE), quote(d)),
+  R2_M1   = list(f("z_AestheticScore"), quote(d[year == "2019"])),
+  R2_M2   = list(f(vis2), quote(d[year == "2019"])),
+  R3_M1   = list(f("z_AestheticScore", y = "comments"), quote(d)),
+  R3_M2   = list(f(vis2, y = "comments"), quote(d)),
+  R4_M1   = list(f("z_AestheticScore"), quote(d[account %in% two_plus])),
+  R4_M2   = list(f(vis2), quote(d[account %in% two_plus])),
+  R5_M2W  = list(f(vis2_w), quote(d)),
+  R6_M1   = list(f("z_AestheticScore"), quote(d[eval(trimmed_rows)])),
+  R6_M2   = list(f(vis2), quote(d[eval(trimmed_rows)])),
+  M0_train = list(f("1"), quote(d[split == "train"])),        # H5, evaluated in src/04
+  M2_train = list(f(vis2), quote(d[split == "train"]))
 )
 
 tidy <- function(m, name) {
@@ -91,9 +91,9 @@ for (nm in todo) {
     if (!dir.create(sprintf("data/models/%s.lock", nm), showWarnings = FALSE)) next
     t0 <- Sys.time()
     st <- if (specs[[nm]][[1]][[2]] == "likes") warm() else NULL   # comments (R3) differ in scale
-    m <- glmmTMB(specs[[nm]][[1]], family = nbinom2, data = specs[[nm]][[2]], start = st,
+    m <- glmmTMB(specs[[nm]][[1]], family = nbinom2, data = eval(specs[[nm]][[2]]), start = st,
                  control = glmmTMBControl(optCtrl = list(iter.max = 1e4, eval.max = 1e4)))
-    saveRDS(m, rds)
+    saveRDS(m, rds); rm(m); invisible(gc())
     message(nm, ": ", round(difftime(Sys.time(), t0, units = "mins"), 1), " min")
   }
   fwrite(tidy(readRDS(rds), nm), sprintf("outputs/tables/03_coef_%s.csv", nm))
