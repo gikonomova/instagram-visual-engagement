@@ -20,7 +20,7 @@ def rows(name):
 
 
 def f(x, k=3):
-    return f"{float(x):.{k}f}"
+    return "[pending]" if x in ("", "NA", None) else f"{float(x):.{k}f}"
 
 
 def p(x):
@@ -113,6 +113,7 @@ def tokens(draft=False):
     t["EL_M1"], t["EL_M1_ci"] = f(e["est"]), ci(e["lo95"], e["hi95"])
     e = ex["IRR one person vs none (M2, combined)"]
     t["ONE_PERSON"], t["ONE_PERSON_ci"] = f(e["est"]), ci(e["lo95"], e["hi95"])
+    t["ONE_PERSON_pct"] = f(100 * (float(e["est"]) - 1), 0)
 
     dg = {r["model"]: r for r in rows("04_model_diagnostics.csv")}
     t["all_converged"] = "all" if all(r["converged"] == "TRUE" and r["pdHess"] == "TRUE"
@@ -121,6 +122,12 @@ def tokens(draft=False):
                              if not (r["converged"] == "TRUE" and r["pdHess"] == "TRUE")) or "none"
     for m in ["M1", "M2", "R4_M2", "M2_train", "M0_train"]:
         t[f"theta_{m}"], t[f"su_{m}"] = f(dg[m]["theta"]), f(dg[m]["sigma_u"])
+    bad = [k for k, r in dg.items() if not (r["converged"] == "TRUE" and r["pdHess"] == "TRUE")]
+    refit = sorted(p.name.replace("_firstfit.rds", "") for p in (ROOT / "data/models").glob("*_firstfit.rds"))
+    t["CONVERGENCE_SENTENCE"] = (
+        f"All {len(dg)} fitted models converged with positive-definite Hessians"
+        + (f"; {', '.join(refit)} reported false convergence on the first fit and converged after a restart from its own estimates, with unchanged estimates (D20)." if refit else ".")
+        if not bad else f"Models {', '.join(bad)} did not pass the convergence checks and are not used for confirmatory verdicts.")
     t["TABLE_DIAG"] = md_table(["Model", "Posts", "Accounts", "θ", "σ_u", "Converged", "pd Hessian"],
                                [[k, n(r["n"]), n(r["accounts"]), f(r["theta"]), f(r["sigma_u"]),
                                  r["converged"].lower(), r["pdHess"].lower()]
@@ -147,7 +154,13 @@ def tokens(draft=False):
             coef[(r["model"], r["term"])] = r
     for (m, term), r in coef.items():
         if m in ("M2", "M1W", "R5_M2W"):
-            t[f"c_{m}_{term}"] = f"{f(r['irr'])} {ci(r['lo95'], r['hi95'])}"
+            key = re.sub(r"\W", "_", term)
+            t[f"c_{m}_{key}"] = f"{f(r['irr'])} {ci(r['lo95'], r['hi95'])}"
+            t[f"i_{m}_{key}"] = f(r["irr"])
+
+    w = {r["term"]: float(r["est"]) for r in csv.DictReader(open(T / "03_coef_M1W.csv"))}
+    t["BETWEEN_AES"] = f(math.exp(w["z_AestheticScore"] + w["m_z_AestheticScore"]))
+    t["BETWEEN_PERSON"] = f(math.exp(w["person_present"] + w["m_person_present"]))
 
     pl = {r["image_shot"]: r for r in rows("04_feature_plausibility_by_shot.csv")}
     t["pl_selfie"] = f(100 * float(pl["Selife Shot"]["person_share"]), 1)
@@ -181,7 +194,8 @@ def main(path, draft=False):
     if missing and not draft:
         sys.exit(f"unfilled tokens: {missing}")
     t.update({k: "[pending: model results]" for k in missing})
-    sys.stdout.write(re.sub(r"\{\{(\w+)\}\}", lambda m: str(t[m[1]]), text))
+    out = re.sub(r"\{\{(\w+)\}\}", lambda m: str(t[m[1]]), text)
+    sys.stdout.write(out.replace("p = < ", "p < "))
 
 
 if __name__ == "__main__":

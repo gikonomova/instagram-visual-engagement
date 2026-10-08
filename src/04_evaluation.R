@@ -143,7 +143,13 @@ fwrite(as.data.table(round(cor(d[split == "train", ..attr_cols]), 3), keep.rowna
        TAB("04_attribute_correlations_train.csv"))
 
 # ---- Figures ------------------------------------------------------------------------------------
-lab <- function(x) gsub("^z_|Score$", "", gsub("image_shot|image_category", "", x))
+pretty <- c(z_BalancingElements = "Balancing elements", z_ColorHarmony = "Colour harmony",
+            z_ContentAesthetics = "Content", z_DoFScore = "Depth of field", z_LightScore = "Lighting",
+            z_ObjectScore = "Object emphasis", z_RuleOfThirdsScore = "Rule of thirds",
+            z_VividColorScore = "Vivid colour", person_present = "Person present",
+            log_n_person = "log(1 + persons)", log_n_objects = "log(1 + objects)")
+lab <- function(x) ifelse(x %in% names(pretty), pretty[x],
+                          sub(" Shot$", "", sub("Selife", "Selfie", gsub("image_shot|image_category", "", x))))
 mm <- coef[model == "M2" & (grepl("^z_", term) | term %in% c("person_present", "log_n_person", "log_n_objects"))]
 mm[, kind := "Content"][grepl("^z_", term), kind := "Aesthetic\n(per SD)"]
 p <- ggplot(mm, aes(irr, reorder(lab(term), irr), xmin = lo95, xmax = hi95)) +

@@ -271,3 +271,11 @@ cold starts, so warm starts change only the optimiser's path, not the estimates.
 
 Completed before this change, with unchanged code paths: M1, M2, M1W, M2_train, M0_train,
 M1_B, M2_A, M2_B, M1W_A, M1W_B, R1_M1, R4_M1, R4_M2.
+
+**D20 Non-converged first fit of M1.** M1, fitted before the D18/D19 changes with a cold start,
+ended with nlminb "false convergence (8)": max |gradient| 0.57, positive-definite Hessian. Under
+D14 a non-converged model cannot carry a confirmatory verdict. `src/03b_refit_nonconverged.R`
+therefore restarts the optimiser from the fit's own estimates (fixed effects, dispersion, RE SD,
+and random effects). The first fit is kept as `M1_firstfit.rds`, and the log reports the change
+in log-likelihood and coefficients. The same procedure applies to any other model with a
+non-zero convergence code.

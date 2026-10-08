@@ -11,7 +11,7 @@ gikonomova@uni-sofia.bg
 :::
 
 ::: {custom-style="CSIRkeywords"}
-**Abstract -** {{ABSTRACT}}
+**Abstract -** Do visual properties of a photograph predict how many likes it earns once audience size is taken into account? We analysed 583,830 Instagram photographs from 469,330 public accounts with a pre-registered negative binomial mixed model. The model has an account random intercept and uses the log of the recorded follower count as an offset. A finding counted only if it passed Holm-corrected significance, exceeded a ±3% smallest effect size of interest (with equivalence tests for null claims), and replicated in two disjoint halves of accounts. Higher overall aesthetic quality (+{{H1_pct}}% likes per follower per SD; IRR {{H1_irr}}, 95% CI {{H1_ci}}) and the presence of a detected person (IRR {{H2_irr}}, {{H2_ci}}) were supported. The aesthetic association held within accounts (IRR {{c_M1W_z_AestheticScore}}), and its between-account component differed only negligibly. Colour vividness, often recommended to creators, had a practically negligible association (IRR {{H3_irr}}, {{H3_ci}}). On 94,172 held-out accounts, visual features improved the joint log predictive score by {{H5_delta}} nats per post (95% CI {{H5_ci}}). A freely estimated follower elasticity of {{EL_M1}} shows that likes grow sublinearly with audience size. The study demonstrates an auditable CRISP-DM workflow for large-sample social-media inference.
 :::
 
 **DOI:** -----\
@@ -69,7 +69,10 @@ We ask two research questions:
 - **RQ2.** Do visual features improve the prediction of likes for accounts the model has not
   seen, beyond follower count, timing, and caption controls?
 
-{{INTRO_RESULTS}}
+In brief, two visual properties pass all criteria: overall aesthetic quality (+{{H1_pct}}% likes
+per recorded follower per SD) and the presence of a person (about +{{ONE_PERSON_pct}}%). The aesthetic
+association holds within accounts. Colour vividness has a practically negligible association.
+Visual features improve held-out prediction by a small but reliable margin.
 
 The contributions are fourfold. (i) A pre-registered, audience-normalised analysis of visual
 features at the scale of over half a million posts. It uses a decision rule that combines
@@ -365,13 +368,239 @@ followed the amendment and did not alter any specification. Because the registra
 a repository the author controls, its independence rests on the git and GitHub timestamps.
 Archiving the tagged release with a DOI service would give an independent timestamp.
 
-{{RESULTS}}
+# Results (CRISP-DM Phase 5)
 
-{{DISCUSSION}}
+## Confirmatory hypotheses
+
+Table 3 and Figure 8 summarise the five confirmatory tests. Three hypotheses are supported,
+and two are classified as negligible. No hypothesis is inconclusive.
+
+{{TABLE_CONFIRMATORY}}
+
+: Table 3. Confirmatory results. IRRs are per training SD (H1, H3), for presence versus absence (H2), or $\exp(\delta)$ = between/within ratio (H4). H5 is the difference in joint log score per post on held-out accounts. p values are Holm-adjusted across H1-H5 (significance) and across H1-H4 (TOST).
+
+![Figure 8. Confirmatory estimates for the full sample and the two replication halves. Grey band: SESOI [0.97, 1.03].](outputs/figures/fig0_confirmatory.png){width=3.3in}
+
+**H1 (overall aesthetic score): supported.** One training SD higher aesthetic score is
+associated with {{H1_pct}}% more likes per recorded follower (IRR {{H1_irr}}, 95% CI
+{{H1_ci}}). The interval lies entirely above the SESOI band, and the estimate is reproduced
+almost exactly in half A ({{H1_A}}) and half B ({{H1_B}}).
+
+**H2 (person present): supported.** Holding the other visual terms fixed, photographs with a
+detected person receive {{H2_pct}}% more likes per recorded follower (IRR {{H2_irr}}, 95% CI
+{{H2_ci}}; halves {{H2_A}} and {{H2_B}}). Because person count enters the same model, the
+overall contrast for exactly one person against none is IRR {{ONE_PERSON}} {{ONE_PERSON_ci}}.
+Each additional person is associated with slightly fewer likes (IRR for log(1 + persons)
+{{c_M2_log_n_person}}).
+
+**H3 (vivid colour): negligible, and in the opposite direction.** Conditional on the other
+attributes, vivid colour is associated with *fewer* likes (IRR {{H3_irr}}, 95% CI {{H3_ci}}). The
+one-sided test for a positive association is not significant (Holm p = {{H3_p}}). The 90% CI
+{{H3_ci90}} lies inside the SESOI band and the Holm-adjusted TOST rejects (p = {{H3_ptost}}), so
+any association is smaller than ±3% per SD.
+
+**H4 (within versus between accounts): negligible difference.** Between-account and
+within-account aesthetic associations differ significantly (ratio {{H4_irr}}, 95% CI {{H4_ci}},
+Holm p = {{H4_p}}), but the difference is practically negligible (90% CI {{H4_ci90}}; TOST Holm
+p = {{H4_ptost}}). The within-account association alone is IRR {{c_M1W_z_AestheticScore}}, and
+the implied between-account association is {{BETWEEN_AES}}. Most of the aesthetic association
+therefore holds *within* the same account: an account's better-scored photographs earn more
+likes per follower than its own weaker ones.
+
+**H5 (prediction): supported.** On {{test_accounts}} held-out accounts, adding the visual
+features improves the joint log predictive score by {{H5_delta}} nats per post (95% paired
+bootstrap CI {{H5_ci}}). That is a {{H5_gm}}% gain in geometric-mean predictive probability. The
+lower bound exceeds the pre-specified 0.01 threshold. The gain is the same in the test accounts
+of both halves ({{H5_A}} and {{H5_B}}), with account weighting ({{H5_acctw}}), and with 60
+quadrature nodes ({{H5_60}}). The rank correlation between predicted and observed likes per
+recorded follower rises from {{H5_rho0}} (controls only) to {{H5_rho2}}.
+
+Verdicts are stable across practical thresholds (Table 4). H1 and H2 exceed even a ±5% band.
+H3 and H4 are inside the band at ±3% and ±5%, but outside it at ±1%, so they are small rather
+than exactly zero.
+
+{{TABLE_SENS}}
+
+: Table 4. SESOI sensitivity: whether the 95% CI lies entirely outside the band / the 90% CI lies entirely inside it.
+
+## Exploratory results: attributes, content, and framing
+
+Figure 9 shows all visual terms of M2. Beyond the confirmatory terms, the content attribute
+({{c_M2_z_ContentAesthetics}}) is the only aesthetic attribute whose interval lies above the
+SESOI band. Lighting ({{c_M2_z_LightScore}}) and rule of thirds ({{c_M2_z_RuleOfThirdsScore}}) are
+positive but straddle the band. Object emphasis ({{c_M2_z_ObjectScore}}) is slightly negative,
+and depth of field ({{c_M2_z_DoFScore}}) is null. The attributes are correlated (Figure 5), so
+these are conditional associations and should not be read as independent levers.
+
+![Figure 9. Visual terms of M2 (IRR per training SD for attributes). Grey band: SESOI.](outputs/figures/fig2_m2_visual_irr.png){width=3.3in}
+
+Framing and genre matter more than any single aesthetic attribute (Figure 10). Relative to
+medium shots, close-ups ({{c_M2_image_shotClose_Up_Shot}}), point-of-view shots
+({{c_M2_image_shotPoint_of_View_Shot}}), and aerial shots ({{c_M2_image_shotAerial_Shot}})
+receive 11-14% fewer likes per recorded follower. Portraits are the only shot scale above the
+reference ({{c_M2_image_shotPortrait_Shot}}). Among image categories, sport
+({{c_M2_image_categorySport}}), art ({{c_M2_image_categoryArt}}), fashion
+({{c_M2_image_categoryFashion}}), and animals ({{c_M2_image_categoryAnimals}}) are above the
+lifestyle reference. Text images ({{c_M2_image_categoryText}}) and brand imagery
+({{c_M2_image_categoryBrand}}) are below it. Among the controls, business accounts receive fewer
+likes per recorded follower ({{c_M2_business}}), as do captions with more mentions
+({{c_M2_log_mentions}} per log unit).
+
+![Figure 10. Shot-scale and image-category terms of M2 (IRR against medium shot and lifestyle).](outputs/figures/fig3_m2_categories_irr.png){width=3.3in}
+
+Internal replication extends beyond the confirmatory terms. Across all visual terms of M2, the
+log-IRRs estimated in half A and half B correlate at 0.98 (Figure 11).
+
+![Figure 11. Replication of all M2 visual terms across disjoint halves of accounts.](outputs/figures/fig4_replication.png){width=3.3in}
+
+## Robustness
+
+Table 5 and Figure 12 report the focal estimates under each robustness specification.
+Freeing the follower coefficient (R1) gives an elasticity of {{EL_M1}} {{EL_M1_ci}}, well below
+the value of 1 imposed by the offset. Likes grow less than proportionally with recorded
+followers. Under R1 the aesthetic association becomes larger ({{rob_R1_M1_z_AestheticScore}}),
+so the offset specification is, if anything, conservative for H1. Restricting to multi-post
+accounts (R4), where the account effect is identified from repeated posts, gives the same signs
+and similar magnitudes: aesthetic {{rob_R4_M1_z_AestheticScore}}, person
+{{rob_R4_M2_person_present}}, vivid colour {{rob_R4_M2_z_VividColorScore}}. {{ROBUST_REST}}
+
+{{TABLE_ROBUST}}
+
+: Table 5. Focal estimates across robustness specifications (exploratory).
+
+![Figure 12. Focal estimates across robustness specifications. Grey band: SESOI.](outputs/figures/fig7_robustness.png){width=3.3in}
+
+## Model adequacy and calibration
+
+{{CONVERGENCE_SENTENCE}} The NB2 dispersion and the account SD are similar across models
+(Table 7). In the main model M2, $\hat\theta$ = {{theta_M2}} and $\hat\sigma_u$ = {{su_M2}}. On
+multi-post accounts only (R4), $\hat\sigma_u$ = {{su_R4_M2}}, so the account variance is not an
+artefact of single-post accounts. Calibration on held-out accounts is adequate but not perfect
+(Table 6, Figure 13). Central 50% and 90% prediction intervals cover {{cal_M2_50}} and
+{{cal_M2_90}} of observations for M2 ({{cal_M0_50}} and {{cal_M0_90}} for M0). Both PIT
+histograms show the same mild excess of observations below the predictive distribution and a
+deficit in the extreme upper tail. Calibration is nearly identical for M0 and M2, so the H5 gain
+reflects sharper predictions rather than a calibration difference. Conditional randomised
+quantile residuals [28] are under-dispersed (Figure 14). This is expected when the predicted
+account effect absorbs the single post of most accounts, so the held-out PIT is the more
+informative check.
+
+{{TABLE_CALIB}}
+
+: Table 6. Calibration on held-out accounts (single-post marginal predictive distributions).
+
+![Figure 13. Randomised PIT histograms on held-out accounts. A uniform histogram (dashed line) indicates calibration.](outputs/figures/fig6_pit.png){width=3.3in}
+
+![Figure 14. Conditional randomised quantile residuals of M2 with the standard normal density (dashed).](outputs/figures/fig5_m2_residuals.png){width=3.3in}
+
+{{TABLE_DIAG}}
+
+: Table 7. Fitted models: sample, NB2 dispersion θ, account SD σ_u, and convergence checks.
+
+# Discussion
+
+## What the evidence supports
+
+Two visual properties pass every criterion: significance after multiplicity correction, a
+practically meaningful size, and internal replication. Photographs with a higher overall
+aesthetic score, and photographs that contain a detected person, receive more likes per recorded
+follower. The person association (about +{{ONE_PERSON_pct}}% for one person against none) is four times the
+aesthetic association per SD (+{{H1_pct}}%). It is also about the same size as the differences
+between shot scales and image genres (Figure 10). For a creator choosing *what* to photograph,
+this suggests that content and framing carry more weight than polish on any single aesthetic
+attribute. In the M2 model, no individual attribute exceeds +4% per SD.
+
+The person result is consistent in direction with the face effect reported by Bakhshi et al.
+[8] but smaller (+{{ONE_PERSON_pct}}% against +38%). Three differences can explain the gap: the indicator here
+is a general person detector, not a face detector; the outcome is normalised by followers; and
+the model conditions on shot scale, genre, and the aesthetic attributes. The aesthetic result
+agrees with experimental-aesthetics evidence that Instagram likes track aesthetic appeal [5] and
+with the professional-quality effect in [7]. Our design adds that the association is mostly a
+within-account phenomenon. H4 found a statistically detectable but practically negligible
+difference between between-account and within-account associations, and the within-account
+association alone (+4.2% per SD) clears the SESOI band. The aesthetic "driver" is therefore not
+mainly an artefact of better-resourced accounts posting better-looking photographs. Within one
+account, the better-scored photographs earn more likes per follower.
+
+## What it does not support
+
+Vivid colour, the attribute most often recommended in practitioner advice and studied in
+tourism marketing [3], shows no practically meaningful association. Its conditional association
+is slightly *negative*, and the equivalence test bounds it inside ±3% per SD. This is a
+conditional estimate. Vividness correlates 0.61-0.75 with colour harmony, lighting, content, and
+the overall score (Figure 5), so its unique contribution, holding those fixed, is small. That
+does not contradict findings that specific colour *schemes* matter in specific genres [3]. It
+does indicate that "more vivid" is not, in itself, a general lever.
+
+H3 and H4 illustrate the large-sample p-value problem [9]. Both coefficients are
+"significant" at conventional levels, H3 in the unexpected direction, yet both are bounded
+inside ±3% with Holm-adjusted equivalence tests. Without the pre-registered SESOI and the
+equivalence test, both would probably have been reported as findings.
+
+## Audience normalisation
+
+The free follower elasticity of {{EL_M1}} is a substantive finding in its own right. Likes grow
+sublinearly with recorded followers, so likes-per-follower engagement rates systematically
+favour small accounts. For research, an offset is a convenient normalisation, but its implied
+elasticity of one should be tested rather than assumed. In our data, freeing it strengthened the
+aesthetic association (R1), so the offset results are conservative for H1. For practitioners,
+engagement-rate comparisons across accounts of very different size need a size adjustment.
+
+## Prediction
+
+Visual features improve out-of-sample prediction for unseen accounts by a modest but reliable
+{{H5_delta}} nats per post (a {{H5_gm}}% gain in geometric-mean predictive probability). The rank
+correlation of predicted and observed likes per follower rises from {{H5_rho0}} to {{H5_rho2}}.
+Most of the remaining variation sits in the account effect ($\hat\sigma_u \approx$ {{su_M2}},
+about a 2.5-fold difference in expected likes per follower between accounts one SD apart) and
+in post-level noise. Visual features alone therefore cannot forecast an individual post's
+performance well, consistent with earlier findings that social context dominates popularity
+prediction [17, 18].
+
+## Limitations
+
+**Unvalidated feature provenance.** The image features were supplied without documentation.
+Their names match AADB [21] and COCO [22], but the generating models and their accuracy on
+Instagram imagery are unknown. Three scores were numerically degenerate, and depth-of-field
+scores agree only partly with shot scale (Figure 4). For a single error-prone predictor such as
+the overall score, classical measurement error biases the IRR towards one. In M2 the attributes
+are correlated, so the direction of bias for any one attribute is not guaranteed. The
+negligible findings (H3) concern these proxies, not colour vividness as perceived by viewers.
+
+**Follower snapshot and exposure.** Followers were recorded once per account, at collection.
+They are not impressions, and the time between posting and collection is unknown. Month fixed
+effects absorb average differences but not account-specific follower growth.
+
+**Observational design.** Mundlak within-account estimates remove stable account-level
+confounding under the stated assumptions, but not time-varying confounding. For example, an
+account may post its best-produced photographs alongside important announcements. All estimates
+are associations, not effects of changing a photograph.
+
+**Sample and generalisability.** The sampling process behind the dataset is undocumented. The
+data are English-language only and {{share_2019}}% from 2019, before the platform's shift towards Reels and
+short video, and videos were excluded. Instagram's ranking and visual culture have changed
+since. Replication is internal (split halves of one dataset), not an independent replication on
+new data.
+
+**Calibration.** Predictive distributions are adequately but not perfectly calibrated, with
+mild misfit in the tails (Figure 13). A model with a more flexible dispersion structure, such as
+dispersion varying by genre, may improve this.
 
 # Conclusion
 
-{{CONCLUSION}}
+In 583,830 Instagram photographs, two visual properties are robustly associated with more likes
+per recorded follower: higher overall aesthetic quality (+{{H1_pct}}% per SD) and the presence of
+a person (about +{{ONE_PERSON_pct}}%). Both pass Holm-corrected significance, a pre-registered ±3% practical
+threshold, and split-half replication. The aesthetic association holds within accounts, not
+only between them. Colour vividness, often recommended to creators, has a practically
+negligible association, bounded by an equivalence test. Visual features add a small but reliable
+improvement to predictions for unseen accounts. Methodologically, the study shows how
+pre-registration, an explicit smallest effect size of interest, and equivalence testing turn
+"significant at n = 583,830" into claims that can be checked. It also shows that audience
+normalisation by follower count should be tested: the estimated elasticity is {{EL_M1}}, not 1.
+Future work should validate the image features against human ratings, use exposure data
+(impressions) where platforms provide them, and test whether the associations hold for short
+video.
 
 # Reproducibility Statement
 
