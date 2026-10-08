@@ -1,0 +1,32 @@
+{
+  "rows": 605868,
+  "columns": 33,
+  "accounts": 485125,
+  "accounts_with_2plus_posts": 53279,
+  "posts_in_2plus_accounts": 174022,
+  "posts_per_account_max": 31,
+  "duplicate_shortcodes": 0,
+  "date_min": "2012-02-07 18:38:13",
+  "date_max": "2019-08-14 11:52:57",
+  "followers_zero": 232,
+  "likes_zero_share": 0.004963127281850172,
+  "followers_vary_within_account": 0,
+  "missing_values": 0,
+  "lang": {
+    "en": 605868
+  },
+  "post_type": {
+    "1": 584061,
+    "2": 21807
+  },
+  "posts_by_year": {
+    "2012": 330,
+    "2013": 990,
+    "2014": 2919,
+    "2015": 7935,
+    "2016": 20822,
+    "2017": 43608,
+    "2018": 101153,
+    "2019": 428111
+  }
+}
