@@ -49,4 +49,8 @@
 \[25\] Holm, S. (1979). A simple sequentially rejective multiple test procedure. Scandinavian Journal of Statistics, 6(2), 65--70. <https://www.jstor.org/stable/4615733>
 
 \[26\] Kim, S., Jiang, J.-Y., Nakada, M., Han, J., & Wang, W. (2020). Multimodal post attentive profiling for influencer marketing. In Proceedings of The Web Conference 2020 (pp. 2878--2884). ACM. <https://doi.org/10.1145/3366423.3380052>
+
+\[27\] Czado, C., Gneiting, T., & Held, L. (2009). Predictive model assessment for count data. Biometrics, 65(4), 1254--1261. <https://doi.org/10.1111/j.1541-0420.2009.01191.x>
+
+\[28\] Dunn, P. K., & Smyth, G. K. (1996). Randomized quantile residuals. Journal of Computational and Graphical Statistics, 5(3), 236--244. <https://doi.org/10.1080/10618600.1996.10474708>
 :::

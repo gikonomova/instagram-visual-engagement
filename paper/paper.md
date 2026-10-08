@@ -1,5 +1,5 @@
 ---
-title: "Do Visual Features Drive Instagram Engagement Once Audience Size Is Accounted For? A Pre-Registered Mixed-Model Analysis of 584,000 Posts"
+title: "Visual Features and Likes per Recorded Follower on Instagram: A Pre-Registered Mixed-Model Analysis of 583,830 Posts"
 ---
 
 ::: {custom-style="CSIRAuthors"}
@@ -23,202 +23,366 @@ gikonomova@uni-sofia.bg
 © 2026 Galya Aymalieva. This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License. The article is published with Open Access at <http://csirjournal.com/>
 
 ::: {custom-style="CSIRkeywords"}
-**Keywords --** social media analytics, computational aesthetics, negative binomial mixed model, pre-registration, CRISP-DM
+**Keywords --** social media analytics, computational aesthetics, negative binomial mixed model, pre-registration, equivalence testing, CRISP-DM
 :::
 
 # Introduction
 
 Instagram is the largest image-first social platform, and the number of likes a post receives
-is the most visible currency of the attention economy. Brands, influencers, and public-sector
-communicators spend heavily on visual production in the belief that *how a picture looks*
-determines how well it performs. A growing computational literature appears to support this
-belief. Deep-learning and computer-vision features have been linked to engagement in influencer
-marketing [1], food marketing [2], tourism [3, 4], architecture [5], and public-health
-communication [6]. Image content has been shown to matter beyond text in marketing research [7],
-and faces in particular have been reported to raise engagement [8].
+is its most visible engagement signal. Brands, influencers, and public-sector communicators
+invest in visual production in the belief that how a picture looks affects how well it
+performs. A computational literature supports this belief. Computer-vision features have been
+associated with engagement in influencer marketing [1], food marketing [2], tourism [3, 4],
+architectural photography [5], and public-health communication [6]. Image content has been
+shown to matter beyond text in marketing research [7], and photographs containing faces have
+been reported to attract more likes [8].
 
-Two features of this literature limit what it can tell a practitioner. First, most studies
-analyse a few hundred to a few tens of thousands of posts from a small number of accounts
-[1-5]. At that scale, account identity, audience size, and visual style are entangled: an
-account with a large, loyal audience may also have a larger production budget, so its photos
-are both better-looking and more liked. Without a within-account comparison, a "visual effect"
-cannot be separated from an "account effect". Second, results are usually reported as
-statistical significance from exploratory modelling. Sample sizes in social-media data are now
-so large that the p-value alone is uninformative [9]. When many features are screened, the
-reported "drivers" also risk being artefacts of researcher degrees of freedom [10].
+Two features of this literature limit what a practitioner can take from it. First, most studies
+analyse a few hundred to a few tens of thousands of posts from a limited set of accounts
+[1-6]. Larger studies [18, 26] focus on prediction or profiling rather than on isolating visual
+associations. In cross-sectional data, account identity, audience size, and visual style are
+entangled. Accounts with larger audiences may also have larger production budgets, so their
+photographs are both more polished and more liked. Second, results are typically reported as
+statistical significance from exploratory modelling. At the sample sizes now common in
+social-media research, a p-value alone is uninformative [9], and screening many features
+without a prior protocol invites researcher degrees of freedom [10].
 
 This paper addresses both limitations. We analyse 583,830 photo posts from 469,330 public
-accounts with a negative binomial generalised linear mixed model (NB-GLMM) in which **log
-follower count enters as an offset**. Every coefficient is therefore a multiplicative effect
-on *likes per follower*: the engagement a photo earns relative to the audience that could see
-it. A random intercept per account absorbs stable account-level differences, and a Mundlak
-within/between decomposition [11, 12] tests directly whether visual effects operate within
-accounts or only between them. The work follows the CRISP-DM process model [13, 14]. Most
-importantly, all five confirmatory hypotheses, the smallest effect size of interest (SESOI),
-the multiplicity correction, and the replication criterion were committed to a public git
-repository *before* any model relating visual features to likes was fitted [10].
+accounts with a negative binomial generalised linear mixed model (NB-GLMM) in which the log of
+the **recorded follower count** enters as an offset. Each coefficient is therefore a
+multiplicative association with *likes relative to the recorded follower count*. This is a
+pragmatic normalisation: follower counts are not impressions, and Section 3.1 discusses how they
+differ. A random intercept per account captures stable account-level heterogeneity, and a
+Mundlak decomposition [11, 12] separates within-account from between-account associations. The
+work follows the CRISP-DM process model [13, 14]. The five confirmatory hypotheses, the
+smallest effect size of interest (SESOI), the multiplicity correction, and the replication
+criterion were committed to a version-controlled protocol *before* any model relating visual
+features to likes was estimated [10]. One amendment, made before any confirmatory result
+existed, clarified the decision rules (Section 4.5).
 
 We ask two research questions:
 
-- **RQ1.** Which visual properties (overall aesthetic quality, colour vividness, presence of
-  people) are associated with more likes per follower, by an amount that is both statistically
-  significant and practically meaningful, and do those associations replicate across
-  independent sets of accounts?
-- **RQ2.** Do visual features improve the prediction of engagement for accounts the model has
-  never seen, beyond audience size, timing, and caption controls?
+- **RQ1.** Which visual properties (overall aesthetic quality, colour vividness, presence of a
+  detected person) are associated with likes per recorded follower by an amount that is both
+  statistically significant and larger than a pre-specified practical threshold? Do these
+  associations replicate across disjoint sets of accounts?
+- **RQ2.** Do visual features improve the prediction of likes for accounts the model has not
+  seen, beyond follower count, timing, and caption controls?
 
 {{INTRO_RESULTS}}
 
-The contributions are fourfold. (i) To our knowledge this is the largest audience-normalised
-analysis of visual features and Instagram engagement, roughly an order of magnitude larger than
-the studies reviewed in Section 2. (ii) It is pre-registered, with a decision rule that combines
-Holm-corrected significance, a ±3% SESOI with equivalence testing [15], and split-half
-replication. This separates practically meaningful effects from effects that are merely
-detectable at large n. (iii) It quantifies within- versus between-account effects, which
-indicates how far visual "drivers" reported in cross-sectional studies reflect account selection.
-(iv) It evaluates predictive value with a strictly proper scoring rule [16] on held-out accounts,
-integrating over the unknown account effect. The full pipeline, decision log, and git history
-are public.
+The contributions are fourfold. (i) A pre-registered, audience-normalised analysis of visual
+features at the scale of over half a million posts. It uses a decision rule that combines
+Holm-corrected significance, a ±3% SESOI with equivalence testing [15], and internal split-half
+replication, so practically meaningful associations are separated from those that are merely
+detectable at large n. (ii) A quantification of within-account versus between-account
+associations, which shows how far visual "drivers" reported in cross-sectional studies may
+reflect differences between accounts. (iii) A held-out evaluation of predictive value using the
+joint log predictive score for new accounts [16], reported together with calibration
+diagnostics [27]. (iv) A fully auditable pipeline: code, decision log, protocol and amendment
+(as git tags), and aggregate outputs.
 
 # Related Work
 
 ## Image features and engagement
 
-Early large-scale work on Flickr showed that image content and low-level features predict view
-counts, but much less well than social context such as follower counts [17]. On Instagram,
-photos with faces were found to receive 38% more likes [8]. Li and Xie [7], studying Twitter and
-Instagram, found that image presence and professional quality raise engagement, with effects
-that depend on platform and content. Domain studies have since used off-the-shelf vision models
-to code content: colour schemes in tourism photos [3], food typicality via Google Vision [2],
-lines and corners in travel-agency posts [4], and image classes in anti-vaping campaigns [6].
-In experimental aesthetics, Instagram likes on architectural photographs have been validated as a
-measure of aesthetic appeal [5]. Popularity-prediction studies combine user, post, and image
-features in machine-learning models [18-20]. They report high rank correlations that are driven
-largely by user features, and they rarely isolate the visual contribution.
+Early large-scale work on Flickr found that image content predicts view counts, but much less
+well than social context such as follower counts [17]. On Instagram, photos with faces were
+reported to receive 38% more likes [8]. Our person indicator comes from a general object
+detector (the COCO "person" class [22]). It also flags people seen from behind or at a distance,
+so it is a broader construct than face detection. Li and Xie [7] found that image presence and
+professional quality are associated with engagement on Twitter and Instagram, with effects that
+depend on platform and content. Domain studies have used off-the-shelf vision models to code
+content: colour schemes in tourism photographs [3], food typicality [2], lines and corners in
+travel-agency posts [4], and image classes in anti-vaping campaigns [6]. In experimental
+aesthetics, Instagram likes on architectural photographs have been validated as a measure of
+aesthetic appeal [5]. Popularity-prediction studies combine user, post, and image features
+[18-20]. They report high rank correlations that are driven largely by user features, and they
+rarely isolate the visual contribution. Large Instagram corpora have also been used to profile
+influencers by topic [26] rather than to estimate visual associations with engagement.
 
 ## Computational aesthetics
 
-The AADB dataset and the attribute-adaptive ranking network of Kong et al. [21] introduced
-eleven interpretable photographic attributes (balancing elements, colour harmony, content, depth
-of field, lighting, motion blur, object emphasis, repetition, rule of thirds, symmetry, vivid
-colour) alongside an overall aesthetic score. Object labels in most applied pipelines follow the
-COCO taxonomy [22]. These attributes give an interpretable vocabulary for *what kind* of
-aesthetic quality matters, which a single learned "aesthetic score" cannot. The dataset used
-here provides AADB-style attributes, COCO-style object labels, and a shot-scale classification
-for every image.
+The AADB dataset and attribute-adaptive ranking network of Kong et al. [21] defined eleven
+interpretable photographic attributes alongside an overall aesthetic score: balancing elements,
+colour harmony, content, depth of field, lighting, motion blur, object emphasis, repetition,
+rule of thirds, symmetry, and vivid colour. These give a vocabulary for *what kind* of
+aesthetic quality matters, which a single score cannot. The dataset used here provides
+AADB-named attributes, COCO-style object labels, and a shot-scale classification for each
+image. Their provenance is discussed in Section 3.2.
 
 ## Methodological gaps
 
-Three gaps motivate the design. (a) **Audience normalisation:** many studies model raw likes,
-or use followers as an ordinary covariate whose coefficient absorbs much of the variance. An
-offset fixes the follower elasticity at one, so coefficients are interpretable as effects on
-engagement rate. We test that assumption explicitly (robustness R1). (b) **Account
-heterogeneity:** pooled cross-sectional estimates confound visual style with account quality.
-The Mundlak approach [11, 12] recovers the within-account effect inside a random-effects model.
-(c) **Inference at scale:** with n in the hundreds of thousands, statistical significance is
-nearly guaranteed [9]. We therefore pre-register [10] an effect-size criterion and an
-equivalence test [15], so that "no meaningful effect" is a reportable, falsifiable outcome.
+Three gaps motivate the design. (a) **Audience normalisation:** many studies model raw likes or
+enter followers as an ordinary covariate. An offset fixes the follower elasticity at one, so
+coefficients describe likes per recorded follower; we estimate the elasticity explicitly in
+robustness check R1. (b) **Account heterogeneity:** a conventional random intercept does not
+remove confounding when account characteristics correlate with post-level predictors. The
+Mundlak device [11, 12] recovers within-account associations under stated assumptions.
+(c) **Inference at scale:** with hundreds of thousands of observations, significance is nearly
+guaranteed [9]. A pre-registered [10] effect-size criterion and equivalence test [15] make "no
+practically meaningful association" a falsifiable, reportable outcome.
 
-# Data and Problem Formulation (CRISP-DM Phases 1-3)
+# Data (CRISP-DM Phases 1-3)
 
-## Business and data understanding
+## Business understanding and the outcome
 
-The study uses the publicly available Hugging Face dataset *vargr/ig_train_dataset* [23]
-(revision cb6e88ac, SHA-256-verified). It contains 605,868 English-language Instagram posts from
-485,125 accounts, posted between February 2012 and August 2019. 70.7% of the posts are from 2019.
-For each post the dataset provides like and comment counts, follower count, a business-account
-flag, a caption-topic label, detected object labels, a 12-level shot-scale label, an 18-level
-image category, and AADB-style aesthetic scores. The dataset card provides no documentation of
-how the features were generated. We therefore treat all image-derived variables as *model-based
-proxies* and report this as a limitation. Fig. 1 shows the heavy-tailed distributions of likes
-and followers and the concentration of posts in 2019.
+The practical question is which visual properties of a photograph, which a creator controls,
+are associated with more likes, *given* the size of the creator's following, which a creator
+does not control in the short run. The outcome is the like count of each post. Normalisation
+uses the follower count recorded once per account at data collection. Three caveats follow and
+are carried through the paper. (1) The recorded count can differ from the audience at posting
+time, especially for older posts and fast-growing accounts. (2) Followers are not impressions:
+not every follower sees a post, and non-followers can like it. (3) The interval between posting
+and collection is unknown. Month-of-posting fixed effects absorb average differences in this
+interval and platform-wide shifts. They cannot absorb account-specific follower growth or
+post-specific collection intervals. Robustness check R2 (2019 posts only) shortens the time
+between posting and the follower snapshot. R1 replaces the offset with an estimated elasticity.
 
-Profiling (Table 1) found three degenerate scores: motion blur (all |values| < 4·10⁻³³),
-repetition, and symmetry (constant 0.5). These were excluded. The overall aesthetic score
-correlates 0.61-0.86 with six of the attributes, so it is a composite and is analysed in a
-separate model. Follower counts are a single snapshot per account, taken at collection time.
-The median account contributes one post. Only 53,279 accounts (174,022 posts) contribute two
-or more.
+## Data understanding
 
-{{TABLE1}}
+The data are the public Hugging Face dataset *vargr/ig_train_dataset* [23]: revision
+`cb6e88ac5c817329219a3cf55711844774a130a0`, parquet SHA-256
+`0aa06bbfad98704a8a2b32b89b053a66f9c7032f6ac8822807f04908b38f61d5`. It contains
+{{flow_1_raw}} English-language Instagram posts from {{prof_accounts}} accounts, posted between
+February 2012 and August 2019, with {{share_2019}}% from 2019. Each post has like and comment
+counts, the recorded follower count, a business-account flag, a caption-topic label, detected
+object labels, a 12-level shot-scale label, an 18-level image category, and AADB-named
+aesthetic scores. Figure 1 shows the heavy-tailed distributions of likes and followers and the
+concentration of posts in 2019.
+
+![Figure 1. Distributions of likes and recorded followers (log scale) and posts per month.](outputs/figures/fig1_distributions.png){width=3.3in}
+
+**Provenance of the visual features.** The dataset card has no documentation, licence, or
+description of the sampling process. A search of the Hugging Face Hub, GitHub, and the
+literature found no description of the generating pipeline. The attribute names match AADB
+[21], the object labels match COCO [22], and the shot-scale labels match common
+cinematographic taxonomies. The generating models, their training data, and any calibration
+are unknown. We therefore treat all image-derived variables as *model-based proxies* of the
+named constructs. We report three checks of internal plausibility instead of a validation
+against human ratings, which was not feasible because the dataset does not include the images.
+(i) Two independently produced labels agree: a person is detected in {{pl_selfie}}% of images
+labelled selfie and {{pl_portrait}}% labelled portrait, but in only {{pl_aerial}}% of aerial
+shots. (ii) Depth-of-field scores are higher for extreme close-ups (mean z = {{pl_dof_ecu}}) than
+for extreme wide shots ({{pl_dof_ews}}), as optics would predict. (iii) Three attributes were
+numerically degenerate and were excluded: motion blur (all |values| < 4·10⁻³³), repetition, and
+symmetry (constant 0.5). The degenerate attributes show that the feature pipeline was not
+error-free. Any null or negligible finding below therefore concerns these proxies, not visual
+aesthetics in general.
+
+The overall aesthetic score correlates 0.61-0.86 with six attributes, so it is a composite and
+is analysed in a separate model (M1). Among the eight retained attributes, the median absolute
+pairwise correlation in the training data is {{corr_med}} and the maximum is {{corr_max}}
+(Table 1). Coefficients in M2 are therefore *conditional* associations: the association of one
+attribute with the outcome, holding the others fixed.
+
+{{TABLE_CORR}}
+
+: Table 1. Pairwise correlations of the eight retained aesthetic attributes (training accounts).
 
 ## Data preparation
 
-We removed 232 posts with zero followers, for which the offset is undefined, and 21,807 videos,
-whose scores describe a single cover frame. This left 583,830 photo posts from 469,330 accounts.
-Captions were reduced to three counts (log length, hashtags, mentions) and then discarded. No
-usernames, biographies, or captions are stored or published. Continuous visual features were
-z-scored. Accounts were assigned by a salted SHA-256 hash of their identifier to (a) a training
-set (80%) and a held-out test set (20%), and (b) two replication halves A and B. All posts of an
-account fall in the same partition.
+The sample flow is sequential:
+
+1. Start with {{flow_1_raw}} posts.
+2. Remove {{flow_2_removed_followers_0}} posts with zero recorded followers, for which the
+   offset is undefined; one of them is a video. This leaves {{flow_2_remaining}} posts.
+3. Remove {{flow_3_removed_videos}} videos, whose scores describe a single cover frame. This
+   leaves **{{flow_3_remaining}} photo posts** from {{flow_accounts}} accounts.
+
+No captions are missing. Captions were reduced to three counts and then discarded: caption
+length, hashtags, and mentions, each transformed as log(1 + x). The person count and the object
+count are also log(1 + x) and are not standardised. The nine continuous aesthetic scores are
+z-standardised using the mean and SD of the **training accounts only**, so each IRR is per one
+training SD. No usernames, biographies, or captions are stored or published.
+
+Accounts are assigned to partitions by a salted SHA-256 hash of the account identifier. All
+posts of an account fall in the same partition, and the procedure is reproducible without
+releasing identifiers.
+
+- **Training and test split:** 80% of accounts for training and 20% held out for prediction
+  (H5). The test accounts are used only for H5. All preprocessing parameters come from the
+  training accounts.
+- **Replication halves A and B:** formed with an independent salt, so they cut across the
+  training and test split.
+- **Confirmatory inference** (H1-H4) uses all accounts, and the halves are used for internal
+  replication.
+- **Model selection:** none. Every model specification was fixed in the protocol.
+
+Table 2 reports, for each partition, the number of multi-post accounts and the share of each
+focal predictor's variance that lies within accounts, which is the information available to
+within-account estimates.
+
+{{TABLE_PARTITIONS}}
+
+: Table 2. Partitions, multi-post accounts, and the within-account share of predictor variance (sum of squared deviations from account means divided by the total sum of squares).
+
+# Methods (CRISP-DM Phase 4)
 
 ## Model
 
-For post $i$ of account $j$, likes $y_{ij}$ follow a negative binomial (NB2) distribution with
-mean $\mu_{ij}$ and dispersion $\theta$:
+For post $i$ of account $j$, the like count $y_{ij}$ follows a negative binomial (NB2)
+distribution with mean $\mu_{ij}$ and variance $\mu_{ij} + \mu_{ij}^2/\theta$:
 
-$$\log \mu_{ij} = \log(\text{followers}_j) + \mathbf{x}_{ij}^{\top}\boldsymbol\beta + \mathbf{c}_{ij}^{\top}\boldsymbol\gamma + u_j,\qquad u_j \sim \mathcal N(0,\sigma_u^2)\qquad (1)$$
+$$\log \mu_{ij} = \log F_j + \mathbf{x}_{ij}^{\top}\boldsymbol\beta + \mathbf{c}_{ij}^{\top}\boldsymbol\gamma + u_j,\qquad u_j \sim \mathcal N(0,\sigma_u^2)\qquad (1)$$
 
-where $\mathbf{x}_{ij}$ are visual features and $\mathbf{c}_{ij}$ are controls: month-of-posting
-fixed effects (pre-2018 pooled), business account, caption topic (19 levels), and the three
-caption counts. Month effects absorb the average difference in time that posts have had to
-accumulate likes, as well as platform-wide shifts. Because of the offset, $\exp(\beta_k)$ is an
-incidence-rate ratio (IRR) on likes per follower, per SD of a continuous feature or for a binary
-switch. Model M1 uses the overall aesthetic score. Model M2 uses the eight non-degenerate AADB
-attributes, person presence, log(1 + number of persons), log(1 + number of objects), shot scale
-(reference: medium shot), and image category (reference: lifestyle). Model M1-W adds the account
-means $\bar{x}_j$ of the aesthetic score and person presence (Mundlak [11]). The coefficient on
-$\bar{x}_j$ then equals the between-account minus the within-account effect:
+Here $F_j$ is the recorded follower count (an offset), $\mathbf{x}_{ij}$ are visual features,
+and $\mathbf{c}_{ij}$ are controls: month-of-posting fixed effects (months before 2018 pooled),
+business account, caption topic (19 levels), and the three caption counts. $\exp(\beta_k)$ is an
+incidence-rate ratio (IRR) for likes per recorded follower, per training SD of a continuous
+feature or for a binary switch.
 
-$$\log \mu_{ij} = \log(\text{followers}_j) + \beta_W x_{ij} + \delta\,\bar x_j + \mathbf{c}_{ij}^{\top}\boldsymbol\gamma + u_j,\qquad \delta = \beta_B - \beta_W\qquad (2)$$
+- **M1** contains only the overall aesthetic score as its visual term.
+- **M2** contains the eight AADB attributes, a person-presence indicator, log(1 + number of
+  persons), log(1 + number of objects), shot scale (reference: medium shot), and image category
+  (reference: lifestyle). Person presence and person count are entered together, so each has a
+  conditional interpretation. The overall contrast for "one detected person versus none" is
+  $\exp(\beta_{\text{presence}} + \beta_{\text{count}}\log 2)$, which we report with a
+  delta-method CI.
+- **M1-W** adds the account means $\bar{x}_j$ of the aesthetic score and of person presence:
+
+$$\log \mu_{ij} = \log F_j + \beta_W x_{ij} + \delta\,\bar x_j + \mathbf{c}_{ij}^{\top}\boldsymbol\gamma + u_j,\qquad \delta = \beta_B - \beta_W\qquad (2)$$
+
+Here $\beta_W$ is the within-account association and $\beta_B = \beta_W + \delta$ is the
+between-account association. The decomposition assumes that, given $\bar{x}_j$, $u_j$ is
+independent of the post-level covariates and depends on $\bar{x}_j$ linearly. $\beta_W$ is
+identified only from accounts with two or more posts (Table 2). M1-W gives means only to the two
+focal predictors of H4. The exploratory model **R5** adds account means for *every* post-varying
+numeric covariate of M2 and so tests whether the other covariates need the same treatment. The
+categorical shot and category dummies receive no means.
 
 Models were fitted by maximum likelihood with the Laplace approximation in glmmTMB 1.1.9 [24]
-(R 4.1.2).
+under R 4.1.2. For every model we record the convergence code and whether the Hessian is
+positive definite.
 
-## Pre-registered hypotheses and decision rule
+## Separating account heterogeneity from dispersion
 
-The hypotheses (Table 2) were committed to the public repository (commit `ae91829`) before any
-outcome model was fitted. The five p-values are Holm-adjusted [25]. A hypothesis is
-**supported** if the adjusted p < 0.05, the 95% CI of the IRR lies entirely outside the SESOI
-band [0.97, 1.03], and the effect has the same sign and is significant (p < 0.05) in both
-replication halves. It is declared **negligible** if the 90% CI lies entirely inside the band
-(two one-sided tests [15]). Otherwise it is **inconclusive**. H5 compares the mean per-post
-log predictive score of M2 and a controls-only model M0 on held-out accounts. For each new
-account the random effect is integrated out jointly over its posts by 30-point Gauss-Hermite
-quadrature:
+For an account with one post, $u_j$ and the NB2 dispersion both inflate the marginal variance.
+They are distinguishable only through the shape of the marginal distribution, a lognormal
+mixture of negative binomials, so identification of $\sigma_u$ rests mainly on the
+{{acc2_all}} multi-post accounts ({{acc2_posts_all}} posts). We therefore report $\theta$ and
+$\sigma_u$ for every model (Table 7). We also refit the main models on multi-post accounts only
+(R4), where $\sigma_u$ is identified from repeated posts.
 
-$$\log p(\mathbf y_j) = \log \int \prod_{i} \text{NB}\!\left(y_{ij}\mid e^{\eta_{ij}+u},\theta\right)\phi(u;0,\hat\sigma_u^2)\,du\qquad (3)$$
+## Prediction and calibration (H5)
 
-The 95% CI of the difference comes from 1,000 account-level bootstrap resamples. The log score is
-strictly proper [16], so an improvement cannot be obtained by miscalibrated predictions.
+The predictive target is the **joint** distribution of all posts of a new account. Because the
+account is unseen, $u_j$ is integrated out jointly over its posts:
 
-{{TABLE2}}
+$$\log p(\mathbf y_j) = \log \int \prod_{i=1}^{n_j} \text{NB2}\!\left(y_{ij}\mid \exp(\hat\eta_{ij}+u),\hat\theta\right)\phi(u;0,\hat\sigma_u^2)\,du\qquad (3)$$
 
-Pre-specified robustness checks were: R1, log(followers) as a free covariate instead of an
-offset; R2, posts from 2019 only; R3, comments as the outcome; R4, accounts with two or more
-posts only.
+Here $\hat\eta_{ij}$ is the fitted fixed-effect linear predictor including the offset,
+$n_j$ is the number of posts of account $j$, $\phi$ is the normal density, and the integral is
+evaluated by Gauss-Hermite quadrature with 30 nodes (checked against 60). The per-post score is
+$\sum_j \log p(\mathbf y_j) / \sum_j n_j$, which weights posts equally; the account-weighted
+mean is also reported. Models M0 (controls only) and M2 were fitted on training accounts and
+scored on the {{test_accounts}} test accounts ({{test_posts}} posts). The 95% CI of the score
+difference comes from 1,000 *paired* bootstrap resamples of test accounts, applying the same
+resample to both models. A strictly proper score rewards the true predictive distribution in
+expectation [16]. It does not guarantee that the better-scoring model is calibrated, so we
+report calibration separately: randomised probability integral transform (PIT) histograms
+[27] and the empirical coverage of central 50% and 90% prediction intervals, computed from each
+post's marginal predictive distribution.
+
+## Pre-registered hypotheses and decision rules
+
+Table 3 lists the hypotheses. Each was registered with its direction, estimand, model, and test
+before estimation.
+
+| H | Claim (association) | Estimand / model | Test |
+|---|---|---|---|
+| H1 | Higher overall aesthetic score → more likes per recorded follower | IRR per SD, $\beta$ of aesthetic score in M1 | One-sided Wald, IRR > 1 |
+| H2 | A detected person → more likes per recorded follower | IRR of person presence in M2 | One-sided Wald, IRR > 1 |
+| H3 | More vivid colour → more likes per recorded follower | IRR per SD of vivid colour in M2 | One-sided Wald, IRR > 1 |
+| H4 | Within- and between-account aesthetic associations differ | $\exp(\delta)$ in M1-W (eq. 2) | Two-sided Wald, $\delta \ne 0$ |
+| H5 | Visual features improve held-out prediction | Δ joint log score per post, M2 − M0 | One-sided paired bootstrap, Δ > 0 |
+
+: Table 3. Confirmatory hypotheses (registered as tag prereg-v1).
+
+The decision rules separate three questions.
+
+**(a) Statistical significance against a null of no association.** Wald tests (one-sided for
+H1-H3, two-sided for H4) and the bootstrap test for H5. The five p-values are Holm-adjusted [25].
+
+**(b) Practical importance.** For H1-H4, the 95% CI of the IRR lies entirely outside the SESOI
+band [0.97, 1.03]. For H5, which is measured in log-score units, the lower 95% bound of the
+score difference must be at least 0.01 nats per post. That threshold is a 1% gain in
+geometric-mean predictive probability ($e^{0.01} = 1.010$), the same order as the IRR band.
+
+**(c) Internal replication.** In each half A and B, the estimate has the same sign as in the
+full sample and a nominal p < 0.05 with the same sidedness, unadjusted. For H5, the score
+difference is positive in the test accounts of both halves.
+
+A hypothesis is **supported** if (a) after Holm adjustment, (b), and (c) all hold. It is
+**negligible** if the 90% CI lies inside the band, as pre-registered, *and* the two one-sided
+tests (TOST) [15] against 0.97 and 1.03 reject after Holm adjustment across H1-H4. For H5,
+negligible means the 95% CI lies within ±0.01. Anything else is **inconclusive**. The ±3% band
+was fixed in advance as a convention, not estimated. At the median post (42 likes) it
+corresponds to about 1.3 likes, far below the Poisson-level noise of a single post (SD ≈ 6.5
+likes). We report verdicts for ±1% and ±5% as a sensitivity analysis (Table 6), together with all
+CIs.
+
+Pre-specified robustness checks:
+- **R1:** log follower count as a free covariate, which estimates the elasticity;
+- **R2:** 2019 posts only;
+- **R3:** comments as the outcome;
+- **R4:** accounts with two or more posts only.
+
+Two further checks were added in the amendment, before any results:
+- **R5:** the full Mundlak model;
+- **R6:** without posts above the training 99.9th percentile of likes per recorded follower
+  and without accounts with more than 10⁶ followers.
+
+All are exploratory.
+
+## Registration and chronology
+
+The protocol is stored in `DECISIONS.md` in the project repository. It is marked by git tag
+`prereg-v1` (commit `ae91829`, 2026-10-08 11:16:07 EEST, pushed to GitHub immediately) and by
+amendment tag `amend-A1` (commit `2b7378c`, 11:33:32 EEST). The repository records the
+complete chronology. Before registration, the only outcome information inspected was the
+marginal distribution of likes (Figure 1) and the dispersion parameters of two control-only
+timing fits on random subsamples. These fits contained no visual terms. A first batch of fits
+was stopped before any model finished, because the amendment changed the preprocessing. All
+confirmatory fits were run after the amendment. A code check on a 6,000-account subsample
+followed the amendment and did not alter any specification. Because the registration lives in
+a repository the author controls, its independence rests on the git and GitHub timestamps.
+Archiving the tagged release with a DOI service would give an independent timestamp.
 
 {{RESULTS}}
 
 {{DISCUSSION}}
 
+# Conclusion
+
+{{CONCLUSION}}
+
 # Reproducibility Statement
 
-All code, the decision log, pre-registration, aggregate outputs, and the git history are
-available at <https://github.com/gikonomova/instagram-visual-engagement>. The pipeline
-(`run_all.sh`) downloads the dataset, verifies its checksum, and reproduces every table and
-figure. Account partitions are deterministic hashes. The bootstrap seed is 20261008. Software:
-Python 3.9 (pyarrow 21, pandas 2.3), R 4.1.2, glmmTMB 1.1.9, data.table, ggplot2. Raw data and
-fitted model objects are not redistributed because they contain account identifiers.
+All code, the decision log and protocol (tags `prereg-v1` and `amend-A1`), aggregate outputs,
+and the full git history are in the project repository,
+<https://github.com/gikonomova/instagram-visual-engagement>. `run_all.sh` downloads the
+dataset, verifies its SHA-256 checksum, and reproduces every table and figure. Every number in
+this manuscript is inserted from the output tables by `paper/fill.py`. Partitions are
+deterministic salted hashes. The bootstrap seed is 20261008.
+
+Software: Python 3.9.6 (pyarrow 21.0.0, pandas 2.3.3, numpy 2.0.2, matplotlib 3.9.4), R 4.1.2
+(glmmTMB 1.1.9, TMB, data.table, nanoparquet, ggplot2), and pandoc for the manuscript. The full
+R session information is in `outputs/tables/03_sessionInfo.txt`. Raw data and fitted model
+objects are not redistributed because they contain account identifiers.
 
 # Ethical Considerations
 
-The analysis uses a publicly posted secondary dataset of public Instagram posts. No new data
-were collected and no individual was contacted. Usernames, biographies, and captions were
-never stored after loading. Only aggregate statistics are published. The dataset is distributed
-without an explicit licence or documented provenance, which limits the claims that can be made
-about collection consent. We report the analysis as secondary research on aggregate patterns
-and do not identify any account.
+This is a secondary analysis of a dataset of public Instagram posts that was already publicly
+available. No data were collected from, and no contact was made with, any individual. Usernames,
+biographies, and captions were never written to disk after loading. Captions were reduced to
+three counts, and only aggregate statistics are published. No account is identified.
+
+The dataset is distributed without a licence or documented provenance. We therefore cannot
+verify the conditions under which it was collected. This is a limitation for any reuse, and it
+is why we redistribute neither the data nor derived post-level records. The analysis was
+conducted under the research-ethics provisions of Sofia University "St. Kliment Ohridski".
+{{ETHICS_DETERMINATION}}
 
 # Declaration of Generative AI and AI-Assisted Technologies in the Writing Process
 
