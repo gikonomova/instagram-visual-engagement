@@ -249,3 +249,11 @@ Checks:
 - 30 versus 60 quadrature nodes changed the H5 score difference by less than 1e-4;
 - population-level predictions include the log(followers) offset (eta - offset is about the
   intercept).
+
+**D18 Run-time engineering (no specification change).** M1 took 133 min on the full sample under
+heavy memory swapping. To finish the queue sooner:
+- workers share one priority queue (confirmatory models first), with a lock directory per model;
+- fits after M1 start the NB dispersion and the RE SD at M1's estimates (warm start).
+
+A smoke test showed identical log-likelihood (to 0.01) and coefficients (to 1e-5) for warm and
+cold starts, so warm starts change only the optimiser's path, not the estimates.

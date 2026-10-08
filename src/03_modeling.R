@@ -71,13 +71,27 @@ tidy <- function(m, name) {
 
 dir.create("data/models", showWarnings = FALSE, recursive = TRUE)
 dir.create("outputs/tables", showWarnings = FALSE, recursive = TRUE)
+# Priority order: confirmatory models first, then robustness. Several workers can run this
+# script at once. A lock directory per model stops two workers fitting the same model.
 todo <- commandArgs(trailingOnly = TRUE)
-if (!length(todo)) todo <- names(specs)
+if (!length(todo)) todo <- c("M1", "M2", "M1W", "M2_train", "M0_train", "M1_A", "M1_B", "M2_A",
+                             "M2_B", "M1W_A", "M1W_B", "R1_M2", "R1_M1", "R4_M2", "R4_M1", "R6_M2",
+                             "R6_M1", "R2_M2", "R2_M1", "R5_M2W", "R3_M2", "R3_M1")
+stopifnot(setequal(todo, names(specs)) || all(todo %in% names(specs)))
+# Warm start (D18): once M1 exists, start dispersion and RE SD at its estimates. This changes only
+# the optimiser's starting point, not the maximum-likelihood target.
+warm <- function() {
+  if (!file.exists("data/models/M1.rds")) return(NULL)
+  m1 <- readRDS("data/models/M1.rds")
+  list(theta = log(sqrt(VarCorr(m1)$cond$account[1])), betad = log(sigma(m1)))
+}
 for (nm in todo) {
   rds <- sprintf("data/models/%s.rds", nm)
   if (!file.exists(rds)) {
+    if (!dir.create(sprintf("data/models/%s.lock", nm), showWarnings = FALSE)) next
     t0 <- Sys.time()
-    m <- glmmTMB(specs[[nm]][[1]], family = nbinom2, data = specs[[nm]][[2]],
+    st <- if (specs[[nm]][[1]][[2]] == "likes") warm() else NULL   # comments (R3) differ in scale
+    m <- glmmTMB(specs[[nm]][[1]], family = nbinom2, data = specs[[nm]][[2]], start = st,
                  control = glmmTMBControl(optCtrl = list(iter.max = 1e4, eval.max = 1e4)))
     saveRDS(m, rds)
     message(nm, ": ", round(difftime(Sys.time(), t0, units = "mins"), 1), " min")
