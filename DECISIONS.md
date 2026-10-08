@@ -240,3 +240,12 @@ likes per follower exceed the training 99.9th percentile and without accounts wi
 - The GitHub repository is private until submission. When it is made public, the commit and
   push timestamps become visible. Archiving the tagged release on Zenodo gives an independent
   DOI timestamp.
+
+**D17 Code verification (after A1).** `src/03` and `src/04` were run end to end on a seeded
+6,000-account subsample (7,587 posts) in a scratch copy, to catch code errors before the
+full-sample run. This found and fixed a call to `ngrps()`, which needs lme4 attached. Subsample
+estimates were used only to confirm that the code runs and were not used for any decision.
+Checks:
+- 30 versus 60 quadrature nodes changed the H5 score difference by less than 1e-4;
+- population-level predictions include the log(followers) offset (eta - offset is about the
+  intercept).

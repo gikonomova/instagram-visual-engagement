@@ -63,7 +63,7 @@ tidy <- function(m, name) {
              irr = exp(s[, 1]),
              lo95 = exp(s[, 1] - 1.959964 * s[, 2]), hi95 = exp(s[, 1] + 1.959964 * s[, 2]),
              lo90 = exp(s[, 1] - 1.644854 * s[, 2]), hi90 = exp(s[, 1] + 1.644854 * s[, 2]),
-             n = nobs(m), accounts = ngrps(m)$cond[["account"]],
+             n = nobs(m), accounts = uniqueN(m$frame$account),
              sigma_u = sqrt(VarCorr(m)$cond$account[1]), theta = sigma(m),
              loglik = as.numeric(logLik(m)), aic = AIC(m), converged = m$fit$convergence == 0,
              pdHess = m$sdr$pdHess)
