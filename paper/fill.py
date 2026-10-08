@@ -126,7 +126,7 @@ def tokens(draft=False):
     refit = sorted(p.name.replace("_firstfit.rds", "") for p in (ROOT / "data/models").glob("*_firstfit.rds"))
     t["CONVERGENCE_SENTENCE"] = (
         f"All {len(dg)} fitted models converged with positive-definite Hessians"
-        + (f"; {', '.join(refit)} reported false convergence on the first fit and converged after a restart from its own estimates, with unchanged estimates (D20)." if refit else ".")
+        + (f"; {', '.join(refit)} reported a false-convergence warning from nlminb; re-optimisation from its own estimates with an independent optimiser (BFGS) converged to the same optimum (identical log-likelihood and coefficients; D20)." if refit else ".")
         if not bad else f"Models {', '.join(bad)} did not pass the convergence checks and are not used for confirmatory verdicts.")
     t["TABLE_DIAG"] = md_table(["Model", "Posts", "Accounts", "θ", "σ_u", "Converged", "pd Hessian"],
                                [[k, n(r["n"]), n(r["accounts"]), f(r["theta"]), f(r["sigma_u"]),
@@ -145,6 +145,18 @@ def tokens(draft=False):
                                  [[lab[r["term"]], desc.get(r["model"], r["model"]), f(r["irr"]),
                                    ci(r["lo95"], r["hi95"])] for r in rob])
     t["rob_rows"] = {}
+    got = {(r["model"], r["term"]): f"{f(r['irr'])} {ci(r['lo95'], r['hi95'])}" for r in rob}
+    parts = []
+    for m1, m2, text in [("R2_M1", "R2_M2", "Restricting to 2019 posts (R2)"),
+                         ("R6_M1", "R6_M2", "Removing extreme observations (R6)"),
+                         ("R3_M1", "R3_M2", "With comments as the outcome (R3)")]:
+        a, b = got.get((m1, "z_AestheticScore")), got.get((m2, "person_present"))
+        if a and b:
+            parts.append(f"{text} gives aesthetic {a} and person {b}.")
+    if ("R5_M2W", "person_present") in got:
+        parts.append(f"In the full Mundlak model (R5), the within-account associations are person "
+                     f"{got[('R5_M2W', 'person_present')]} and vivid colour {got[('R5_M2W', 'z_VividColorScore')]}.")
+    t["ROBUST_REST"] = " ".join(parts)
     for r in rob:
         t[f"rob_{r['model']}_{r['term']}"] = f"{f(r['irr'])} {ci(r['lo95'], r['hi95'])}"
 
