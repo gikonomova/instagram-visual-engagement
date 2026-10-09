@@ -1,0 +1,24 @@
+R version 4.1.2 (2021-11-01)
+Platform: aarch64-apple-darwin20 (64-bit)
+Running under: macOS 26.3.1
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] nanoparquet_0.5.2 data.table_1.14.2 glmmTMB_1.1.9    
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.1.2          lattice_0.20-45     MASS_7.3-54        
+ [4] grid_4.1.2          nlme_3.1-153        minqa_1.2.5        
+ [7] nloptr_2.0.3        Matrix_1.5-1        boot_1.3-28        
+[10] splines_4.1.2       lme4_1.1-30         tools_4.1.2        
+[13] TMB_1.9.25          numDeriv_2016.8-1.1 compiler_4.1.2     
+[16] mgcv_1.8-38        
