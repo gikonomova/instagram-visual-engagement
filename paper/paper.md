@@ -11,7 +11,7 @@ gikonomova@uni-sofia.bg
 :::
 
 ::: {custom-style="CSIRkeywords"}
-**Abstract -** Do visual properties of a photograph predict how many likes it earns once audience size is taken into account? We analysed 583,830 Instagram photographs from 469,330 public accounts with a pre-registered negative binomial mixed model. The model has an account random intercept and uses the log of the recorded follower count as an offset. A finding counted only if it passed Holm-corrected significance, exceeded a ±3% smallest effect size of interest (with equivalence tests for null claims), and replicated in two disjoint halves of accounts. Higher overall aesthetic quality (+{{H1_pct}}% likes per follower per SD; IRR {{H1_irr}}, 95% CI {{H1_ci}}) and the presence of a detected person (IRR {{H2_irr}}, {{H2_ci}}) were supported. The aesthetic association held within accounts (IRR {{c_M1W_z_AestheticScore}}), and its between-account component differed only negligibly. Colour vividness, often recommended to creators, had a practically negligible association (IRR {{H3_irr}}, {{H3_ci}}). On 94,172 held-out accounts, visual features improved the joint log predictive score by {{H5_delta}} nats per post (95% CI {{H5_ci}}). A freely estimated follower elasticity of {{EL_M1}} shows that likes grow sublinearly with audience size. The study demonstrates an auditable CRISP-DM workflow for large-sample social-media inference.
+**Abstract -** Do visual properties of a photograph predict how many likes it earns once audience size is taken into account? We analysed 583,830 Instagram photographs from 469,330 public accounts with a pre-registered negative binomial mixed model. The model has an account random intercept and uses the log of the recorded follower count as an offset. A finding counted only if it passed Holm-corrected significance, exceeded a ±3% smallest effect size of interest (with equivalence tests for null claims), and replicated in two disjoint halves of accounts. Higher overall aesthetic quality (+{{H1_pct}}% likes per follower per SD; IRR {{H1_irr}}, 95% CI {{H1_ci}}) and the presence of a detected person (IRR {{H2_irr}}, {{H2_ci}}; about +14% within accounts) were supported. The aesthetic association held within accounts (IRR {{c_M1W_z_AestheticScore}}), and its between-account component differed only negligibly. Colour vividness, often recommended to creators, had a practically negligible association (IRR {{H3_irr}}, {{H3_ci}}). On 94,172 held-out accounts, visual features improved the joint log predictive score by {{H5_delta}} nats per post (95% CI {{H5_ci}}). A freely estimated follower elasticity of {{EL_M1}} shows that likes grow sublinearly with audience size. The study demonstrates an auditable CRISP-DM workflow for large-sample social-media inference.
 :::
 
 **DOI:** -----\
@@ -456,13 +456,18 @@ log-IRRs estimated in half A and half B correlate at 0.98 (Figure 11).
 ## Robustness
 
 Table 5 and Figure 12 report the focal estimates under each robustness specification.
-Freeing the follower coefficient (R1) gives an elasticity of {{EL_M1}} {{EL_M1_ci}}, well below
-the value of 1 imposed by the offset. Likes grow less than proportionally with recorded
+Freeing the follower coefficient (R1) gives an elasticity of {{EL_M1}} {{EL_M1_ci}} ({{EL_M2}}
+{{EL_M2_ci}} in the M2 specification), well below the value of 1 imposed by the offset. Likes grow less than proportionally with recorded
 followers. Under R1 the aesthetic association becomes larger ({{rob_R1_M1_z_AestheticScore}}),
 so the offset specification is, if anything, conservative for H1. Restricting to multi-post
 accounts (R4), where the account effect is identified from repeated posts, gives the same signs
 and similar magnitudes: aesthetic {{rob_R4_M1_z_AestheticScore}}, person
-{{rob_R4_M2_person_present}}, vivid colour {{rob_R4_M2_z_VividColorScore}}. {{ROBUST_REST}}
+{{rob_R4_M2_person_present}}, vivid colour {{rob_R4_M2_z_VividColorScore}}. {{ROBUST_REST}} In every specification the
+aesthetic and person intervals lie above the SESOI band, and the vivid-colour estimate stays
+close to one. The person association is smaller when it is identified within accounts (R4 and
+R5, about +14%). Part of the pooled association therefore reflects differences between accounts
+that post more photographs of people, but the within-account association still clearly exceeds
+the threshold.
 
 {{TABLE_ROBUST}}
 
@@ -508,7 +513,8 @@ follower. The person association (about +{{ONE_PERSON_pct}}% for one person agai
 aesthetic association per SD (+{{H1_pct}}%). It is also about the same size as the differences
 between shot scales and image genres (Figure 10). For a creator choosing *what* to photograph,
 this suggests that content and framing carry more weight than polish on any single aesthetic
-attribute. In the M2 model, no individual attribute exceeds +4% per SD.
+attribute. Identified within accounts, the person association is smaller (about +14%; R4 and R5)
+but still well above the practical threshold. In the M2 model, no individual attribute exceeds +4% per SD.
 
 The person result is consistent in direction with the face effect reported by Bakhshi et al.
 [8] but smaller (+{{ONE_PERSON_pct}}% against +38%). Three differences can explain the gap: the indicator here
@@ -590,7 +596,7 @@ dispersion varying by genre, may improve this.
 
 In 583,830 Instagram photographs, two visual properties are robustly associated with more likes
 per recorded follower: higher overall aesthetic quality (+{{H1_pct}}% per SD) and the presence of
-a person (about +{{ONE_PERSON_pct}}%). Both pass Holm-corrected significance, a pre-registered ±3% practical
+a person (about +{{ONE_PERSON_pct}}% overall and +14% within accounts). Both pass Holm-corrected significance, a pre-registered ±3% practical
 threshold, and split-half replication. The aesthetic association holds within accounts, not
 only between them. Colour vividness, often recommended to creators, has a practically
 negligible association, bounded by an equivalence test. Visual features add a small but reliable
